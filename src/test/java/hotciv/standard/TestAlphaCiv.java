@@ -6,8 +6,6 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
-import java.util.*;
-
 /** Skeleton class for AlphaCiv test cases
 
     Updated Oct 2015 for using Hamcrest matchers
@@ -54,7 +52,7 @@ public class TestAlphaCiv {
   }
 
   @Test
-  public void canGetUnitAt(){
+  public void canAccessUnitAt(){
       Position p = new Position(0,2); //position of Red Archer
       Unit testUnit = game.getUnitAt(p); //get unit located at p
 
