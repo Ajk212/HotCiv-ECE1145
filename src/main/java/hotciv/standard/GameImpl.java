@@ -58,7 +58,25 @@ public class GameImpl implements Game {
   public Player getWinner() { return null; }
   public int getAge() { return 0; }
   public boolean moveUnit( Position from, Position to ) {
-    return false;
+
+      int rowDiff = Math.abs(from.getRow() - to.getRow());
+      int colDiff = Math.abs(from.getColumn() - to.getColumn());
+
+      if (unitLoc.containsKey(from) && (rowDiff + colDiff <= 1)){
+          Unit temp = unitLoc.get(from);
+          unitLoc.remove(from);
+
+          if(unitLoc.containsKey(to)){
+              unitLoc.remove(to);
+              System.out.println("Destination Unit Defeated");
+          }
+
+          unitLoc.put(to, temp);
+          return true;
+      } else if (rowDiff + colDiff > 1 || rowDiff + colDiff < 0) {
+          System.out.println("Invalid Selection, Move Denied");
+      }
+      return false;
   }
   public void endOfTurn() {}
   public void changeWorkForceFocusInCityAt( Position p, String balance ) {}

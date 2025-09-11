@@ -54,7 +54,7 @@ public class TestAlphaCiv {
   @Test
   public void canAccessUnitAt(){
       Position p1 = new Position(2,0); //position of Red Archer
-      Unit testUnit1 = game.getUnitAt(p1); //get unit located at p
+      Unit testUnit1 = game.getUnitAt(p1); //get unit located at p1
 
       assertThat(testUnit1, is(notNullValue())); //checks if unit exist
 
@@ -65,8 +65,8 @@ public class TestAlphaCiv {
       assertThat(testUnit1.getAttackingStrength(), is(1));
 
       //Accessing starting legion
-      Position p2 = new Position(3,2); //position of Red Archer
-      Unit testUnit2 = game.getUnitAt(p2); //get unit located at p
+      Position p2 = new Position(3,2); //position of Blue legion
+      Unit testUnit2 = game.getUnitAt(p2); //get unit located at p2
 
       assertThat(testUnit2.getTypeString(), is("legion"));
       assertThat(testUnit2.getOwner(), is(Player.BLUE));
@@ -74,22 +74,30 @@ public class TestAlphaCiv {
       assertThat(testUnit2.getAttackingStrength(), is(1));
 
       //Accessing starting settler
-      Position p3 = new Position(4,3); //position of Red Archer
-      Unit testUnit3 = game.getUnitAt(p3); //get unit located at p
+      Position p3 = new Position(4,3); //position of Red settler
+      Unit testUnit3 = game.getUnitAt(p3); //get unit located at p3
 
       assertThat(testUnit3.getTypeString(), is("settler"));
       assertThat(testUnit3.getOwner(), is(Player.RED));
       assertThat(testUnit3.getDefensiveStrength(), is(1));
       assertThat(testUnit3.getAttackingStrength(), is(1));
   }
-/*
+
   @Test
   public void canMoveUnit(){
-      Position p1 = new Position(0,2);
-      Position p2 = new Position(0,3);
+      Position p1 = new Position(2,0);
+      Position p2 = new Position(3,0);
+      assertThat(game.moveUnit(p1, p2), is(true));
+
+      p1 = new Position(3,0);
+      p2 = new Position(3,1);
+      assertThat(game.moveUnit(p1, p2), is(true));
+
+      p1 = new Position(3,1);
+      p2 = new Position(3,2);
       assertThat(game.moveUnit(p1, p2), is(true));
   }
-
+/*
   @Test
   public void canAttackWithUnit(){
 
