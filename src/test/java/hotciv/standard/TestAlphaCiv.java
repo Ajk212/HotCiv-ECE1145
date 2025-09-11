@@ -53,15 +53,34 @@ public class TestAlphaCiv {
 
   @Test
   public void canAccessUnitAt(){
-      Position p = new Position(0,2); //position of Red Archer
-      Unit testUnit = game.getUnitAt(p); //get unit located at p
+      Position p1 = new Position(2,0); //position of Red Archer
+      Unit testUnit1 = game.getUnitAt(p1); //get unit located at p
 
-      assertThat(testUnit, is(notNullValue())); //checks if unit exist
+      assertThat(testUnit1, is(notNullValue())); //checks if unit exist
 
-      assertThat(testUnit.getTypeString(), is("archer"));
-      assertThat(testUnit.getOwner(), is(Player.RED));
-      assertThat(testUnit.getDefensiveStrength(), is(1));
-      assertThat(testUnit.getAttackingStrength(), is(1));
+      //Accessing starting Archer
+      assertThat(testUnit1.getTypeString(), is("archer"));
+      assertThat(testUnit1.getOwner(), is(Player.RED));
+      assertThat(testUnit1.getDefensiveStrength(), is(1));
+      assertThat(testUnit1.getAttackingStrength(), is(1));
+
+      //Accessing starting legion
+      Position p2 = new Position(3,2); //position of Red Archer
+      Unit testUnit2 = game.getUnitAt(p2); //get unit located at p
+
+      assertThat(testUnit2.getTypeString(), is("legion"));
+      assertThat(testUnit2.getOwner(), is(Player.BLUE));
+      assertThat(testUnit2.getDefensiveStrength(), is(1));
+      assertThat(testUnit2.getAttackingStrength(), is(1));
+
+      //Accessing starting settler
+      Position p3 = new Position(4,3); //position of Red Archer
+      Unit testUnit3 = game.getUnitAt(p3); //get unit located at p
+
+      assertThat(testUnit3.getTypeString(), is("settler"));
+      assertThat(testUnit3.getOwner(), is(Player.RED));
+      assertThat(testUnit3.getDefensiveStrength(), is(1));
+      assertThat(testUnit3.getAttackingStrength(), is(1));
   }
 /*
   @Test

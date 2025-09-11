@@ -1,4 +1,6 @@
 package hotciv.standard;
+import java.util.HashMap;
+import java.util.Map;
 
 import hotciv.framework.*;
 
@@ -30,9 +32,26 @@ import hotciv.framework.*;
 */
 
 public class GameImpl implements Game {
+
+  public Map<Position, Unit> unitLoc;
+
+  public GameImpl(){
+      //HashMap to store location of units
+      unitLoc = new HashMap<>();
+
+      //Add red starting archer
+      unitLoc.put(new Position(2,0), new UnitImple(GameConstants.ARCHER, Player.RED, 1,1));
+
+      //Add red starting settler
+      unitLoc.put(new Position(4,3), new UnitImple(GameConstants.SETTLER, Player.RED, 1,1));
+
+      //Add blue starting legion
+      unitLoc.put(new Position(3,2), new UnitImple(GameConstants.LEGION, Player.BLUE, 1, 1));
+  }
+
   public Tile getTileAt( Position p ) { return null; }
   public Unit getUnitAt( Position p ) {
-      return new UnitImple(GameConstants.ARCHER, Player.RED, 1,1);
+      return unitLoc.get(p);
   }
   public City getCityAt( Position p ) { return null; }
   public Player getPlayerInTurn() { return null; }
