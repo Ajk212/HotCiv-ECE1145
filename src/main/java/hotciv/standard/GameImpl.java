@@ -31,7 +31,9 @@ import hotciv.framework.*;
 
 public class GameImpl implements Game {
   public Tile getTileAt( Position p ) { return null; }
-  public Unit getUnitAt( Position p ) { return null; }
+  public Unit getUnitAt( Position p ) {
+      return new UnitImple(GameConstants.ARCHER, Player.RED, 1,1);
+  }
   public City getCityAt( Position p ) { return null; }
   public Player getPlayerInTurn() { return null; }
   public Player getWinner() { return null; }
@@ -43,4 +45,24 @@ public class GameImpl implements Game {
   public void changeWorkForceFocusInCityAt( Position p, String balance ) {}
   public void changeProductionInCityAt( Position p, String unitType ) {}
   public void performUnitActionAt( Position p ) {}
+
+  public class UnitImple implements Unit{
+      private String unitType;
+      private Player owner;
+      private int attackingStrength;
+      private int defensiveStrength;
+
+      public UnitImple(String unitType, Player owner, int attackingStrength, int defensiveStrength) {
+          this.unitType = unitType;
+          this.owner = owner;
+          this.attackingStrength = attackingStrength;
+          this.defensiveStrength = defensiveStrength;
+      }
+
+      public String getTypeString() { return unitType;}
+      public Player getOwner() { return owner;}
+      public int getMoveCount(){ return 1;}
+      public int getDefensiveStrength(){ return 1;};
+      public int getAttackingStrength(){ return 1;}
+  }
 }
