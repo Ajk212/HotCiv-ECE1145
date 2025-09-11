@@ -65,7 +65,24 @@ public class TestAlphaCiv {
       assertThat(testUnit.getDefensiveStrength(), is(1));
       assertThat(testUnit.getAttackingStrength(), is(1));
   }
+/*
+  @Test
+  public void canMoveUnit(){
+      Position p1 = new Position(0,2);
+      Position p2 = new Position(0,3);
+      assertThat(game.moveUnit(p1, p2), is(true));
+  }
 
+  @Test
+  public void canAttackWithUnit(){
+
+  }
+
+  @Test
+  public void canUseUnitAbility(){
+
+  }
+*/
   /* REMOVE ME. Not a test of HotCiv, just an example of what
       matchers the hamcrest library has...
   @Test
