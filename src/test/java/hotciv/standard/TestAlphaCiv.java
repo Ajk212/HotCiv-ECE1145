@@ -83,8 +83,36 @@ public class TestAlphaCiv {
       assertThat(testUnit3.getAttackingStrength(), is(1));
   }
 
+    @Test
+    public void canUseUnitAbility(){
+
+        Position p1 = new Position(2,0);
+        Position p2 = new Position(3,2);
+        Position p3 = new Position(4,3);
+        Position p4 = new Position(5,5);
+        game.performUnitActionAt(p1);
+        game.performUnitActionAt(p2);
+        game.performUnitActionAt(p3);
+        game.performUnitActionAt(p4);
+    }
+
   @Test
   public void canMoveUnit(){
+      Position p1 = new Position(2,0);
+      Position p2 = new Position(3,0);
+      assertThat(game.moveUnit(p1, p2), is(true));
+
+      p1 = new Position(3,0);
+      p2 = new Position(3,1);
+      assertThat(game.moveUnit(p1, p2), is(true));
+
+      p1 = new Position(3,1);
+      p2 = new Position(3,3);
+      assertThat(game.moveUnit(p1, p2), is(false));
+  }
+
+  @Test
+  public void canAttackWithUnit(){
       Position p1 = new Position(2,0);
       Position p2 = new Position(3,0);
       assertThat(game.moveUnit(p1, p2), is(true));
@@ -97,17 +125,9 @@ public class TestAlphaCiv {
       p2 = new Position(3,2);
       assertThat(game.moveUnit(p1, p2), is(true));
   }
-/*
-  @Test
-  public void canAttackWithUnit(){
 
-  }
 
-  @Test
-  public void canUseUnitAbility(){
 
-  }
-*/
   /* REMOVE ME. Not a test of HotCiv, just an example of what
       matchers the hamcrest library has...
   @Test

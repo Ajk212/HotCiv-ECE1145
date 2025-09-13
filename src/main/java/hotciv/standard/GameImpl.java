@@ -1,6 +1,7 @@
 package hotciv.standard;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import hotciv.framework.*;
 
@@ -81,7 +82,28 @@ public class GameImpl implements Game {
   public void endOfTurn() {}
   public void changeWorkForceFocusInCityAt( Position p, String balance ) {}
   public void changeProductionInCityAt( Position p, String unitType ) {}
-  public void performUnitActionAt( Position p ) {}
+  public void performUnitActionAt( Position p ) {
+
+      if(unitLoc.containsKey(p)){
+          Unit testUnit = getUnitAt(p);
+          if(Objects.equals(testUnit.getTypeString(), "archer")){
+              System.out.println("No associated ability");
+              return;
+          }
+          else if(Objects.equals(testUnit.getTypeString(), "settler")){
+              System.out.println("Using associated ability: Build City");
+              //Call function to perform action later
+              return;
+          }
+          else if(Objects.equals(testUnit.getTypeString(), "legion")){
+              System.out.println("Using associated ability: Fortify");
+              //Call function to perform action later//Call function to perform action later
+              return;
+          }
+      }
+      System.out.println("No unit at selected position");
+
+  }
 
   public class UnitImple implements Unit{
       private String unitType;
