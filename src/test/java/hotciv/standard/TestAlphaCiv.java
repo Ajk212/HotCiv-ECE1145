@@ -37,45 +37,97 @@ import java.util.*;
 
 */
 public class TestAlphaCiv {
-  private Game game;
+    private Game game;
 
-  /** Fixture for alphaciv testing. */
-  @Before
-  public void setUp() {
-    game = new GameImpl();
-  }
+    /** Fixture for alphaciv testing. */
+    @Before
+    public void setUp() {
+        game = new GameImpl();
+    }
 
-  // FRS p. 455 states that 'Red is the first player to take a turn'.
-  @Test
-  public void shouldBeRedAsStartingPlayer() {
-    assertThat(game, is(notNullValue()));
-    // TODO: reenable the assert below to get started...
-    // assertThat(game.getPlayerInTurn(), is(Player.RED));
-  }
+    @Test
+    public void shouldHaveWorldSizeOf16x16() {
+        assertThat(GameConstants.WORLDSIZE, is(16));
+    }
 
-  /** REMOVE ME. Not a test of HotCiv, just an example of what
-      matchers the hamcrest library has... */
-  @Test
-  public void shouldDefinetelyBeRemoved() {
-    // Matching null and not null values
-    // 'is' require an exact match
-    String s = null;
-    assertThat(s, is(nullValue()));
-    s = "Ok";
-    assertThat(s, is(notNullValue()));
-    assertThat(s, is("Ok"));
+    @Test
+    public void shouldStartGameAtAge4000BC() {
+        assertThat(game, is(notNullValue()));
+        assertThat(game.getAge(), is(-4000));
+    }
 
-    // If you only validate substrings, use containsString
-    assertThat("This is a dummy test", containsString("dummy"));
+    @Test
+    public void shouldIncrementAgeBy100AtEndOfRound() {
+        assertThat(game, is(notNullValue()));
+        assertThat(game.getAge(), is(-4000));
+        game.endOfTurn();
+        game.endOfTurn();
+        assertThat(game.getAge(), is(-3900));
+    }
 
-    // Match contents of Lists
-    List<String> l = new ArrayList<String>();
-    l.add("Bimse");
-    l.add("Bumse");
-    // Note - ordering is ignored when matching using hasItems
-    assertThat(l, hasItems(new String[] {"Bumse","Bimse"}));
+    @Test
+    public void ageShouldNotIncrementUntilEndOfRound() {
+        assertThat(game, is(notNullValue()));
+        assertThat(game.getAge(), is(-4000));
+        game.endOfTurn();
+        assertThat(game.getAge(), is(-4000));
+    }
 
-    // Matchers may be combined, like is-not
-    assertThat(l.get(0), is(not("Bumse")));
-  }
+    @Test
+    public void shouldHaveOceanTileAtPosition0_1() {
+        assertThat(game, is(notNullValue()));
+        Position p = new Position(0,1);
+        assertThat(game.getTileAt(p), is(notNullValue()));
+
+        Tile tile = game.getTileAt(p);
+        assertThat(tile.getTypeString(), is(GameConstants.OCEANS));
+    }
+
+    @Test
+    public void shouldHaveRedCityAtPosition1_1() {
+        assertThat(game, is(notNullValue()));
+        Position p = new Position(1,1);
+        assertThat(game.getCityAt(p), is(notNullValue()));
+
+        City city = game.getCityAt(p);
+        assertThat(city.getOwner(), is(Player.RED));
+    }
+
+    @Test
+    public void shouldHaveBlueCityAtPosition4_1() {
+        assertThat(game, is(notNullValue()));
+        Position p = new Position(4,1);
+        assertThat(game.getCityAt(p), is(notNullValue()));
+
+        City city = game.getCityAt(p);
+        assertThat(city.getOwner(), is(Player.BLUE));
+    }
+
+    @Test
+    public void shouldAlwaysHaveCityPopulationSizeOf1() {
+        City city = new CityImpl(Player.RED);
+        assertThat(city.getSize(), is(1));
+    }
+
+    @Test
+    public void shouldBeRedAsStartingPlayer() {
+        assertThat(game, is(notNullValue()));
+        assertThat(game.getPlayerInTurn(), is(Player.RED));
+    }
+
+    @Test
+    public void shouldChangeTurnFromRedToBlueOnEndOfTurn() {
+        assertThat(game, is(notNullValue()));
+        game.endOfTurn();
+        assertThat(game.getPlayerInTurn(), is(Player.BLUE));
+    }
+
+    @Test
+    public void shouldChangeTurnFromBlueToRedOnEndOfTurn() {
+        assertThat(game, is(notNullValue()));
+        game.endOfTurn();
+        assertThat(game.getPlayerInTurn(), is(Player.BLUE));
+        game.endOfTurn();
+        assertThat(game.getPlayerInTurn(), is(Player.RED));
+    }
 }
