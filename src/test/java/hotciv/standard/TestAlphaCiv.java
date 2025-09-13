@@ -124,6 +124,14 @@ public class TestAlphaCiv {
       p1 = new Position(3,1);
       p2 = new Position(3,2);
       assertThat(game.moveUnit(p1, p2), is(true));
+
+      Unit testUnit = game.getUnitAt(p2); //get unit located at battle
+
+      assertThat(testUnit.getTypeString(), is("archer"));
+      assertThat(testUnit.getOwner(), is(Player.RED));
+      assertThat(testUnit.getDefensiveStrength(), is(1));
+      assertThat(testUnit.getAttackingStrength(), is(1));
+
   }
 
 
