@@ -6,8 +6,6 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
-import java.util.*;
-
 /** Skeleton class for AlphaCiv test cases
 
     Updated Oct 2015 for using Hamcrest matchers
@@ -130,4 +128,91 @@ public class TestAlphaCiv {
         game.endOfTurn();
         assertThat(game.getPlayerInTurn(), is(Player.RED));
     }
+  
+  
+    @Test
+    public void canAccessUnitAt(){
+      Position p1 = new Position(2,0); //position of Red Archer
+      Unit testUnit1 = game.getUnitAt(p1); //get unit located at p1
+
+      assertThat(testUnit1, is(notNullValue())); //checks if unit exist
+
+      //Accessing starting Archer
+      assertThat(testUnit1.getTypeString(), is("archer"));
+      assertThat(testUnit1.getOwner(), is(Player.RED));
+      assertThat(testUnit1.getDefensiveStrength(), is(1));
+      assertThat(testUnit1.getAttackingStrength(), is(1));
+
+      //Accessing starting legion
+      Position p2 = new Position(3,2); //position of Blue legion
+      Unit testUnit2 = game.getUnitAt(p2); //get unit located at p2
+
+      assertThat(testUnit2.getTypeString(), is("legion"));
+      assertThat(testUnit2.getOwner(), is(Player.BLUE));
+      assertThat(testUnit2.getDefensiveStrength(), is(1));
+      assertThat(testUnit2.getAttackingStrength(), is(1));
+
+      //Accessing starting settler
+      Position p3 = new Position(4,3); //position of Red settler
+      Unit testUnit3 = game.getUnitAt(p3); //get unit located at p3
+
+      assertThat(testUnit3.getTypeString(), is("settler"));
+      assertThat(testUnit3.getOwner(), is(Player.RED));
+      assertThat(testUnit3.getDefensiveStrength(), is(1));
+      assertThat(testUnit3.getAttackingStrength(), is(1));
+  }
+
+    @Test
+    public void canUseUnitAbility(){
+
+        Position p1 = new Position(2,0);
+        Position p2 = new Position(3,2);
+        Position p3 = new Position(4,3);
+        Position p4 = new Position(5,5);
+        game.performUnitActionAt(p1);
+        game.performUnitActionAt(p2);
+        game.performUnitActionAt(p3);
+        game.performUnitActionAt(p4);
+    }
+
+    @Test
+    public void canMoveUnit(){
+      Position p1 = new Position(2,0);
+      Position p2 = new Position(3,0);
+      assertThat(game.moveUnit(p1, p2), is(true));
+
+      p1 = new Position(3,0);
+      p2 = new Position(3,1);
+      assertThat(game.moveUnit(p1, p2), is(true));
+
+      p1 = new Position(3,1);
+      p2 = new Position(3,3);
+      assertThat(game.moveUnit(p1, p2), is(false));
+  }
+
+    @Test
+    public void canAttackWithUnit(){
+      Position p1 = new Position(2,0);
+      Position p2 = new Position(3,0);
+      assertThat(game.moveUnit(p1, p2), is(true));
+
+      p1 = new Position(3,0);
+      p2 = new Position(3,1);
+      assertThat(game.moveUnit(p1, p2), is(true));
+
+      p1 = new Position(3,1);
+      p2 = new Position(3,2);
+      assertThat(game.moveUnit(p1, p2), is(true));
+
+      Unit testUnit = game.getUnitAt(p2); //get unit located at battle
+
+      assertThat(testUnit.getTypeString(), is("archer"));
+      assertThat(testUnit.getOwner(), is(Player.RED));
+      assertThat(testUnit.getDefensiveStrength(), is(1));
+      assertThat(testUnit.getAttackingStrength(), is(1));
+
+  }
+
+
+
 }
