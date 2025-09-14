@@ -5,6 +5,9 @@ import java.util.Objects;
 
 import hotciv.framework.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /** Skeleton implementation of HotCiv.
  
    This source code is from the book 
@@ -34,30 +37,56 @@ import hotciv.framework.*;
 
 public class GameImpl implements Game {
 
-  public Map<Position, Unit> unitLoc;
 
-  public GameImpl(){
-      //HashMap to store location of units
-      unitLoc = new HashMap<>();
 
-      //Add red starting archer
-      unitLoc.put(new Position(2,0), new UnitImple(GameConstants.ARCHER, Player.RED, 1,1));
+    public Player playerInTurn = Player.RED;
+    public int worldAge = -4000;
+    public Map<Position, CityImpl> cityLoc;
+    public Map<Position, TileImpl> tileLoc;
+    //HashMap to store location of units
+    public Map<Position, Unit> unitLoc;
+  
+    public GameImpl() {
+        cityLoc = new HashMap<>();
+        tileLoc = new HashMap<>();
+        unitLoc = new HashMap<>();
 
-      //Add red starting settler
-      unitLoc.put(new Position(4,3), new UnitImple(GameConstants.SETTLER, Player.RED, 1,1));
+        cityLoc.put(new Position(1,1), new CityImpl(Player.RED));
+        cityLoc.put(new Position(4,1), new CityImpl(Player.BLUE));
+     
+        tileLoc.put(new Position(0,1), new TileImpl(GameConstants.OCEANS));
+      
+        //Add red starting archer
+        unitLoc.put(new Position(2,0), new UnitImple(GameConstants.ARCHER, Player.RED, 1,1));
+      
+        //Add red starting settler
+        unitLoc.put(new Position(4,3), new UnitImple(GameConstants.SETTLER, Player.RED, 1,1));
 
-      //Add blue starting legion
-      unitLoc.put(new Position(3,2), new UnitImple(GameConstants.LEGION, Player.BLUE, 1, 1));
+        //Add blue starting legion
+        unitLoc.put(new Position(3,2), new UnitImple(GameConstants.LEGION, Player.BLUE, 1, 1));
+    }
+
+  public Tile getTileAt( Position p ) { 
+      return tileLoc.get(p); 
   }
-
-  public Tile getTileAt( Position p ) { return null; }
   public Unit getUnitAt( Position p ) {
       return unitLoc.get(p);
   }
-  public City getCityAt( Position p ) { return null; }
-  public Player getPlayerInTurn() { return null; }
+
+  public City getCityAt(Position p) {
+      return cityLoc.get(p);
+  }
+
+  public Player getPlayerInTurn() {
+      return playerInTurn;
+  }
+
   public Player getWinner() { return null; }
-  public int getAge() { return 0; }
+
+  public int getAge() {
+      return worldAge;
+  }
+
   public boolean moveUnit( Position from, Position to ) {
 
       int rowDiff = Math.abs(from.getRow() - to.getRow());
@@ -79,7 +108,26 @@ public class GameImpl implements Game {
       }
       return false;
   }
-  public void endOfTurn() {}
+
+  public void endOfTurn() {
+      playerInTurn = (playerInTurn == Player.RED) ? Player.BLUE : Player.RED;
+
+      if (playerInTurn == Player.RED) {
+          endOfRound();
+      }
+  }
+
+  public void endOfRound() {
+      // TODO restore all units' move counts
+      // TODO produce food and production in all cities
+      // TODO produce units in all cities (if enough production)
+      // TODO increase population size in all cities (if enough food)
+
+      // increment the world age
+      worldAge += 100;
+  }
+
+
   public void changeWorkForceFocusInCityAt( Position p, String balance ) {}
   public void changeProductionInCityAt( Position p, String unitType ) {}
   public void performUnitActionAt( Position p ) {

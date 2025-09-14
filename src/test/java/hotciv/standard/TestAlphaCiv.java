@@ -35,24 +35,103 @@ import static org.hamcrest.CoreMatchers.*;
 
 */
 public class TestAlphaCiv {
-  private Game game;
+    private Game game;
 
-  /** Fixture for alphaciv testing. */
-  @Before
-  public void setUp() {
-    game = new GameImpl();
-  }
+    /** Fixture for alphaciv testing. */
+    @Before
+    public void setUp() {
+        game = new GameImpl();
+    }
 
-  // FRS p. 455 states that 'Red is the first player to take a turn'.
-  @Test
-  public void shouldBeRedAsStartingPlayer() {
-    assertThat(game, is(notNullValue()));
-    // TODO: reenable the assert below to get started...
-    //assertThat(game.getPlayerInTurn(), is(Player.RED));
-  }
+    @Test
+    public void shouldHaveWorldSizeOf16x16() {
+        assertThat(GameConstants.WORLDSIZE, is(16));
+    }
 
-  @Test
-  public void canAccessUnitAt(){
+    @Test
+    public void shouldStartGameAtAge4000BC() {
+        assertThat(game, is(notNullValue()));
+        assertThat(game.getAge(), is(-4000));
+    }
+
+    @Test
+    public void shouldIncrementAgeBy100AtEndOfRound() {
+        assertThat(game, is(notNullValue()));
+        assertThat(game.getAge(), is(-4000));
+        game.endOfTurn();
+        game.endOfTurn();
+        assertThat(game.getAge(), is(-3900));
+    }
+
+    @Test
+    public void ageShouldNotIncrementUntilEndOfRound() {
+        assertThat(game, is(notNullValue()));
+        assertThat(game.getAge(), is(-4000));
+        game.endOfTurn();
+        assertThat(game.getAge(), is(-4000));
+    }
+
+    @Test
+    public void shouldHaveOceanTileAtPosition0_1() {
+        assertThat(game, is(notNullValue()));
+        Position p = new Position(0,1);
+        assertThat(game.getTileAt(p), is(notNullValue()));
+
+        Tile tile = game.getTileAt(p);
+        assertThat(tile.getTypeString(), is(GameConstants.OCEANS));
+    }
+
+    @Test
+    public void shouldHaveRedCityAtPosition1_1() {
+        assertThat(game, is(notNullValue()));
+        Position p = new Position(1,1);
+        assertThat(game.getCityAt(p), is(notNullValue()));
+
+        City city = game.getCityAt(p);
+        assertThat(city.getOwner(), is(Player.RED));
+    }
+
+    @Test
+    public void shouldHaveBlueCityAtPosition4_1() {
+        assertThat(game, is(notNullValue()));
+        Position p = new Position(4,1);
+        assertThat(game.getCityAt(p), is(notNullValue()));
+
+        City city = game.getCityAt(p);
+        assertThat(city.getOwner(), is(Player.BLUE));
+    }
+
+    @Test
+    public void shouldAlwaysHaveCityPopulationSizeOf1() {
+        City city = new CityImpl(Player.RED);
+        assertThat(city.getSize(), is(1));
+    }
+
+    @Test
+    public void shouldBeRedAsStartingPlayer() {
+        assertThat(game, is(notNullValue()));
+        assertThat(game.getPlayerInTurn(), is(Player.RED));
+    }
+
+    @Test
+    public void shouldChangeTurnFromRedToBlueOnEndOfTurn() {
+        assertThat(game, is(notNullValue()));
+        game.endOfTurn();
+        assertThat(game.getPlayerInTurn(), is(Player.BLUE));
+    }
+
+    @Test
+    public void shouldChangeTurnFromBlueToRedOnEndOfTurn() {
+        assertThat(game, is(notNullValue()));
+        game.endOfTurn();
+        assertThat(game.getPlayerInTurn(), is(Player.BLUE));
+        game.endOfTurn();
+        assertThat(game.getPlayerInTurn(), is(Player.RED));
+    }
+  
+  
+    @Test
+    public void canAccessUnitAt(){
       Position p1 = new Position(2,0); //position of Red Archer
       Unit testUnit1 = game.getUnitAt(p1); //get unit located at p1
 
@@ -96,8 +175,8 @@ public class TestAlphaCiv {
         game.performUnitActionAt(p4);
     }
 
-  @Test
-  public void canMoveUnit(){
+    @Test
+    public void canMoveUnit(){
       Position p1 = new Position(2,0);
       Position p2 = new Position(3,0);
       assertThat(game.moveUnit(p1, p2), is(true));
@@ -111,8 +190,8 @@ public class TestAlphaCiv {
       assertThat(game.moveUnit(p1, p2), is(false));
   }
 
-  @Test
-  public void canAttackWithUnit(){
+    @Test
+    public void canAttackWithUnit(){
       Position p1 = new Position(2,0);
       Position p2 = new Position(3,0);
       assertThat(game.moveUnit(p1, p2), is(true));
@@ -136,30 +215,4 @@ public class TestAlphaCiv {
 
 
 
-  /* REMOVE ME. Not a test of HotCiv, just an example of what
-      matchers the hamcrest library has...
-  @Test
-  public void shouldDefinetelyBeRemoved() {
-    // Matching null and not null values
-    // 'is' require an exact match
-    String s = null;
-    assertThat(s, is(nullValue()));
-    s = "Ok";
-    assertThat(s, is(notNullValue()));
-    assertThat(s, is("Ok"));
-
-    // If you only validate substrings, use containsString
-    assertThat("This is a dummy test", containsString("dummy"));
-
-    // Match contents of Lists
-    List<String> l = new ArrayList<String>();
-    l.add("Bimse");
-    l.add("Bumse");
-    // Note - ordering is ignored when matching using hasItems
-    assertThat(l, hasItems(new String[] {"Bumse","Bimse"}));
-
-    // Matchers may be combined, like is-not
-    assertThat(l.get(0), is(not("Bumse")));
-  }
-  */
 }
