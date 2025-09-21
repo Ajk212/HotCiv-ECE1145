@@ -56,13 +56,13 @@ public class GameImpl implements Game {
         tileLoc.put(new Position(0,1), new TileImpl(GameConstants.OCEANS));
       
         //Add red starting archer
-        unitLoc.put(new Position(2,0), new UnitImple(GameConstants.ARCHER, Player.RED, 1,1));
+        unitLoc.put(new Position(2,0), new UnitImpl(GameConstants.ARCHER, Player.RED, 1,1));
       
         //Add red starting settler
-        unitLoc.put(new Position(4,3), new UnitImple(GameConstants.SETTLER, Player.RED, 1,1));
+        unitLoc.put(new Position(4,3), new UnitImpl(GameConstants.SETTLER, Player.RED, 1,1));
 
         //Add blue starting legion
-        unitLoc.put(new Position(3,2), new UnitImple(GameConstants.LEGION, Player.BLUE, 1, 1));
+        unitLoc.put(new Position(3,2), new UnitImpl(GameConstants.LEGION, Player.BLUE, 1, 1));
     }
 
   public Tile getTileAt( Position p ) { 
@@ -187,23 +187,5 @@ public class GameImpl implements Game {
 
   }
 
-  public class UnitImple implements Unit{
-      private String unitType;
-      private Player owner;
-      private int attackingStrength;
-      private int defensiveStrength;
 
-      public UnitImple(String unitType, Player owner, int attackingStrength, int defensiveStrength) {
-          this.unitType = unitType;
-          this.owner = owner;
-          this.attackingStrength = attackingStrength;
-          this.defensiveStrength = defensiveStrength;
-      }
-
-      public String getTypeString() { return unitType;}
-      public Player getOwner() { return owner;}
-      public int getMoveCount(){ return 1;}
-      public int getDefensiveStrength(){ return 1;};
-      public int getAttackingStrength(){ return 1;}
-  }
 }
