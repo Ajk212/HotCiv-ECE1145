@@ -216,20 +216,28 @@ public class TestAlphaCiv {
 
     @Test
     public void canAccessCity(){
-        //TODO Get production type
         Position p1 = new Position(1,1);
         City testCity = game.getCityAt(p1);
 
         //Check if city exists at given position
         assertThat(testCity, is(notNullValue()));
+
         //Check who owns city
         assertThat(testCity.getOwner(), is(Player.RED));
+
         //Check size of city
         assertThat(testCity.getSize(), is(1));
+
         //Check treasury value
         assertThat(testCity.getTreasury(), is(0));
-        //check production type of city
+
+        //check starting production type of city
         assertThat(testCity.getProduction(),  is(nullValue()));
+
+        //change production type and retest
+        game.changeProductionInCityAt(p1, "archer");
+        assertThat(testCity.getProduction(), is("archer"));
+
 
     }
 
@@ -257,7 +265,19 @@ public class TestAlphaCiv {
 
     @Test
     public void canChangeCityProduction(){
+        Position p1 = new Position(1,1);
+        Position p2 = new Position(4,1);
+        City testCity1 = game.getCityAt(p1);
+        City testCity2 = game.getCityAt(p2);
 
+        assertThat(testCity1.getProduction(), nullValue());
+        assertThat(testCity2.getProduction(), nullValue());
+
+        game.changeProductionInCityAt(p1, "archer");
+        assertThat(testCity1.getProduction(), is("archer"));
+
+        game.changeProductionInCityAt(p2, "settler");
+        assertThat(testCity2.getProduction(), is("settler"));
     }
 
     @Test

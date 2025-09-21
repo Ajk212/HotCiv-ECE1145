@@ -97,7 +97,7 @@ public class GameImpl implements Game {
 
           if(unitLoc.containsKey(to)){
               unitLoc.remove(to);
-              System.out.println("Destination Unit Defeated");
+              //System.out.println("Destination Unit Defeated");
           }
 
           unitLoc.put(to, temp);
@@ -139,6 +139,15 @@ public class GameImpl implements Game {
   public void changeProductionInCityAt( Position p, String unitType ) {
         //TODO check inputs for valid city/unit
         //TODO set city production type
+      if(!(unitType.equals("settler") || unitType.equals("legion") || unitType.equals("archer"))){
+          System.out.println("---- ERROR: Invalid Unit Production Type ----");
+      }
+      if(!cityLoc.containsKey(p)){
+          System.out.println("---- ERROR: Invalid City Location ----");
+      }
+      CityImpl city = cityLoc.get(p);
+      city.productionType = unitType;
+
   }
   public void performUnitActionAt( Position p ) {
 
@@ -149,12 +158,12 @@ public class GameImpl implements Game {
               return;
           }
           else if(Objects.equals(testUnit.getTypeString(), "settler")){
-              System.out.println("Using associated ability: Build City");
+              //System.out.println("Using associated ability: Build City");
               //Call function to perform action later
               return;
           }
           else if(Objects.equals(testUnit.getTypeString(), "legion")){
-              System.out.println("Using associated ability: Fortify");
+              //System.out.println("Using associated ability: Fortify");
               //Call function to perform action later//Call function to perform action later
               return;
           }
