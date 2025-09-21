@@ -34,6 +34,7 @@ import static org.hamcrest.CoreMatchers.*;
    limitations under the License.
 
 */
+
 public class TestAlphaCiv {
     private Game game;
 
@@ -128,8 +129,8 @@ public class TestAlphaCiv {
         game.endOfTurn();
         assertThat(game.getPlayerInTurn(), is(Player.RED));
     }
-  
-  
+
+
     @Test
     public void canAccessUnitAt(){
       Position p1 = new Position(2,0); //position of Red Archer
@@ -213,6 +214,85 @@ public class TestAlphaCiv {
 
   }
 
+    @Test
+    public void canAccessCity(){
+        Position p1 = new Position(1,1);
+        City testCity = game.getCityAt(p1);
 
+        //Check if city exists at given position
+        assertThat(testCity, is(notNullValue()));
+
+        //Check who owns city
+        assertThat(testCity.getOwner(), is(Player.RED));
+
+        //Check size of city
+        assertThat(testCity.getSize(), is(1));
+
+        //Check treasury value
+        assertThat(testCity.getTreasury(), is(0));
+
+        //check starting production type of city
+        assertThat(testCity.getProduction(),  is(nullValue()));
+
+        //change production type and retest
+        game.changeProductionInCityAt(p1, "archer");
+        assertThat(testCity.getProduction(), is("archer"));
+
+
+    }
+
+    @Test
+    public void testProductionGrowth(){
+        Position p1 = new Position(1,1);
+        Position p2 = new Position(4,1);
+        City testCity1 = game.getCityAt(p1);
+        City testCity2 = game.getCityAt(p2);
+
+        //Check treasury value
+        assertThat(testCity1.getTreasury(), is(0));
+        assertThat(testCity2.getTreasury(), is(0));
+
+        game.endOfTurn();
+
+        assertThat(testCity1.getTreasury(), is(0));
+        assertThat(testCity2.getTreasury(), is(6));
+
+        game.endOfTurn();
+
+        assertThat(testCity1.getTreasury(), is(6));
+        assertThat(testCity2.getTreasury(), is(6));
+    }
+
+    @Test
+    public void canChangeCityProduction(){
+        Position p1 = new Position(1,1);
+        Position p2 = new Position(4,1);
+        City testCity1 = game.getCityAt(p1);
+        City testCity2 = game.getCityAt(p2);
+
+        assertThat(testCity1.getProduction(), nullValue());
+        assertThat(testCity2.getProduction(), nullValue());
+
+        game.changeProductionInCityAt(p1, "archer");
+        assertThat(testCity1.getProduction(), is("archer"));
+
+        game.changeProductionInCityAt(p2, "settler");
+        assertThat(testCity2.getProduction(), is("settler"));
+    }
+
+    @Test
+    public void cityCanProduceUnits(){
+
+    }
+
+    @Test
+    public void canChangeCityWorkforce(){
+        Position p1 = new Position(1,1);
+        City testCity = game.getCityAt(p1);
+
+        assertThat(testCity.getWorkforceFocus(), is("food"));
+        game.changeWorkForceFocusInCityAt(p1, "production");
+        assertThat(testCity.getWorkforceFocus(), is("production"));
+    }
 
 }

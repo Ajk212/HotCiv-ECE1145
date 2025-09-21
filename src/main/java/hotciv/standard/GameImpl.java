@@ -5,8 +5,6 @@ import java.util.Objects;
 
 import hotciv.framework.*;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /** Skeleton implementation of HotCiv.
  
@@ -37,14 +35,13 @@ import java.util.Map;
 
 public class GameImpl implements Game {
 
-
-
     public Player playerInTurn = Player.RED;
     public int worldAge = -4000;
     public Map<Position, CityImpl> cityLoc;
     public Map<Position, TileImpl> tileLoc;
     //HashMap to store location of units
     public Map<Position, Unit> unitLoc;
+    public final int productionValue = 6;
   
     public GameImpl() {
         cityLoc = new HashMap<>();
@@ -57,13 +54,13 @@ public class GameImpl implements Game {
         tileLoc.put(new Position(0,1), new TileImpl(GameConstants.OCEANS));
       
         //Add red starting archer
-        unitLoc.put(new Position(2,0), new UnitImple(GameConstants.ARCHER, Player.RED, 1,1));
+        unitLoc.put(new Position(2,0), new UnitImpl(GameConstants.ARCHER, Player.RED, 1,1));
       
         //Add red starting settler
-        unitLoc.put(new Position(4,3), new UnitImple(GameConstants.SETTLER, Player.RED, 1,1));
+        unitLoc.put(new Position(4,3), new UnitImpl(GameConstants.SETTLER, Player.RED, 1,1));
 
         //Add blue starting legion
-        unitLoc.put(new Position(3,2), new UnitImple(GameConstants.LEGION, Player.BLUE, 1, 1));
+        unitLoc.put(new Position(3,2), new UnitImpl(GameConstants.LEGION, Player.BLUE, 1, 1));
     }
 
   public Tile getTileAt( Position p ) { 
@@ -98,7 +95,7 @@ public class GameImpl implements Game {
 
           if(unitLoc.containsKey(to)){
               unitLoc.remove(to);
-              System.out.println("Destination Unit Defeated");
+              //System.out.println("Destination Unit Defeated");
           }
 
           unitLoc.put(to, temp);
@@ -111,6 +108,14 @@ public class GameImpl implements Game {
 
   public void endOfTurn() {
       playerInTurn = (playerInTurn == Player.RED) ? Player.BLUE : Player.RED;
+
+      //add production to city
+      for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
+          CityImpl city = entry.getValue();
+          if(city.getOwner().equals(playerInTurn)){
+              city.treasury += productionValue;
+          }
+      }
 
       if (playerInTurn == Player.RED) {
           endOfRound();
@@ -128,8 +133,35 @@ public class GameImpl implements Game {
   }
 
 
-  public void changeWorkForceFocusInCityAt( Position p, String balance ) {}
-  public void changeProductionInCityAt( Position p, String unitType ) {}
+  public void changeWorkForceFocusInCityAt( Position p, String balance ) {
+
+      //TODO add workforce balance value changes for production and food
+      if(!cityLoc.containsKey(p)){
+          System.out.println("---- ERROR: Invalid City Location ----");
+          return;
+      }
+      if(!(balance.equals("food") || balance.equals("production"))){
+          System.out.println("---- ERROR: Invalid City Balance Type ----");
+          return;
+      }
+
+      CityImpl city = cityLoc.get(p);
+      city.workforceFocus = balance;
+
+  }
+  public void changeProductionInCityAt( Position p, String unitType ) {
+      if(!(unitType.equals("settler") || unitType.equals("legion") || unitType.equals("archer"))){
+          System.out.println("---- ERROR: Invalid Unit Production Type ----");
+          return;
+      }
+      if(!cityLoc.containsKey(p)){
+          System.out.println("---- ERROR: Invalid City Location ----");
+          return;
+      }
+      CityImpl city = cityLoc.get(p);
+      city.productionType = unitType;
+
+  }
   public void performUnitActionAt( Position p ) {
 
       if(unitLoc.containsKey(p)){
@@ -139,12 +171,12 @@ public class GameImpl implements Game {
               return;
           }
           else if(Objects.equals(testUnit.getTypeString(), "settler")){
-              System.out.println("Using associated ability: Build City");
+              //System.out.println("Using associated ability: Build City");
               //Call function to perform action later
               return;
           }
           else if(Objects.equals(testUnit.getTypeString(), "legion")){
-              System.out.println("Using associated ability: Fortify");
+              //System.out.println("Using associated ability: Fortify");
               //Call function to perform action later//Call function to perform action later
               return;
           }
@@ -153,23 +185,5 @@ public class GameImpl implements Game {
 
   }
 
-  public class UnitImple implements Unit{
-      private String unitType;
-      private Player owner;
-      private int attackingStrength;
-      private int defensiveStrength;
 
-      public UnitImple(String unitType, Player owner, int attackingStrength, int defensiveStrength) {
-          this.unitType = unitType;
-          this.owner = owner;
-          this.attackingStrength = attackingStrength;
-          this.defensiveStrength = defensiveStrength;
-      }
-
-      public String getTypeString() { return unitType;}
-      public Player getOwner() { return owner;}
-      public int getMoveCount(){ return 1;}
-      public int getDefensiveStrength(){ return 1;};
-      public int getAttackingStrength(){ return 1;}
-  }
 }
