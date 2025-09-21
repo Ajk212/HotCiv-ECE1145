@@ -281,6 +281,11 @@ public class TestAlphaCiv {
     }
 
     @Test
+    public void cityCanProduceUnits(){
+
+    }
+
+    @Test
     public void canChangeCityWorkforce(){
         Position p1 = new Position(1,1);
         City testCity = game.getCityAt(p1);
