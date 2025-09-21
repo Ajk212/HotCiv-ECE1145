@@ -20,7 +20,7 @@ public class UnitImpl implements Unit {
     public String getTypeString() { return unitType;}
     public Player getOwner() { return owner;}
     public int getMoveCount(){ return 1;}
-    public int getDefensiveStrength(){ return 1;};
+    public int getDefensiveStrength(){ return 1;}
     public int getAttackingStrength(){ return 1;}
 }
 

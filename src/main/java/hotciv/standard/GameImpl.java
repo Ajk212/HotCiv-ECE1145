@@ -5,8 +5,6 @@ import java.util.Objects;
 
 import hotciv.framework.*;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /** Skeleton implementation of HotCiv.
  
@@ -43,7 +41,7 @@ public class GameImpl implements Game {
     public Map<Position, TileImpl> tileLoc;
     //HashMap to store location of units
     public Map<Position, Unit> unitLoc;
-    private final int productionValue = 6;
+    public final int productionValue = 6;
   
     public GameImpl() {
         cityLoc = new HashMap<>();
