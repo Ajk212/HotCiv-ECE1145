@@ -282,7 +282,12 @@ public class TestAlphaCiv {
 
     @Test
     public void canChangeCityWorkforce(){
+        Position p1 = new Position(1,1);
+        City testCity = game.getCityAt(p1);
 
+        assertThat(testCity.getWorkforceFocus(), is("food"));
+        game.changeWorkForceFocusInCityAt(p1, "production");
+        assertThat(testCity.getWorkforceFocus(), is("production"));
     }
 
 }

@@ -135,15 +135,30 @@ public class GameImpl implements Game {
   }
 
 
-  public void changeWorkForceFocusInCityAt( Position p, String balance ) {}
+  public void changeWorkForceFocusInCityAt( Position p, String balance ) {
+
+      //TODO add workforce balance value changes for production and food
+      if(!cityLoc.containsKey(p)){
+          System.out.println("---- ERROR: Invalid City Location ----");
+          return;
+      }
+      if(!(balance.equals("food") || balance.equals("production"))){
+          System.out.println("---- ERROR: Invalid City Balance Type ----");
+          return;
+      }
+
+      CityImpl city = cityLoc.get(p);
+      city.workforceFocus = balance;
+
+  }
   public void changeProductionInCityAt( Position p, String unitType ) {
-        //TODO check inputs for valid city/unit
-        //TODO set city production type
       if(!(unitType.equals("settler") || unitType.equals("legion") || unitType.equals("archer"))){
           System.out.println("---- ERROR: Invalid Unit Production Type ----");
+          return;
       }
       if(!cityLoc.containsKey(p)){
           System.out.println("---- ERROR: Invalid City Location ----");
+          return;
       }
       CityImpl city = cityLoc.get(p);
       city.productionType = unitType;

@@ -9,10 +9,13 @@ public class CityImpl implements City {
     protected Player owner;
     protected int treasury;
     protected String productionType;
+    protected String workforceFocus;
 
     CityImpl(Player owner)
     {
         this.owner = owner;
+        this.treasury = 0;
+        this.workforceFocus = "food";
     }
     
     public Player getOwner() {
@@ -32,6 +35,6 @@ public class CityImpl implements City {
     }
     
     public String getWorkforceFocus() {
-        return null;
+        return workforceFocus;
     }
 }
