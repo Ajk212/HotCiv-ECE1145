@@ -3,9 +3,12 @@ package hotciv.standard;
 import hotciv.framework.Player;
 import hotciv.framework.City;
 
+import java.util.Objects;
+
 public class CityImpl implements City {
     protected Player owner;
     protected int treasury;
+    protected String productionType;
 
     CityImpl(Player owner)
     {
@@ -21,11 +24,11 @@ public class CityImpl implements City {
     }
     
     public int getTreasury() {
-        return 0;
+        return treasury;
     }
     
     public String getProduction() {
-        return null;
+        return productionType;
     }
     
     public String getWorkforceFocus() {

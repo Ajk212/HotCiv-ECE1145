@@ -34,6 +34,7 @@ import static org.hamcrest.CoreMatchers.*;
    limitations under the License.
 
 */
+
 public class TestAlphaCiv {
     private Game game;
 
@@ -128,8 +129,8 @@ public class TestAlphaCiv {
         game.endOfTurn();
         assertThat(game.getPlayerInTurn(), is(Player.RED));
     }
-  
-  
+
+
     @Test
     public void canAccessUnitAt(){
       Position p1 = new Position(2,0); //position of Red Archer
@@ -213,6 +214,24 @@ public class TestAlphaCiv {
 
   }
 
+    @Test
+    public void canAccessCity(){
+        Position p1 = new Position(1,1);
+        City testCity = game.getCityAt(p1);
+        assertThat(testCity, is(notNullValue()));
+        assertThat(testCity.getOwner(), is(Player.RED));
+        assertThat(testCity.getProduction(),  is(nullValue()));
 
+    }
+
+    @Test
+    public void canChangeCityProduction(){
+
+    }
+
+    @Test
+    public void canChangeCityWorkforce(){
+
+    }
 
 }

@@ -37,8 +37,6 @@ import java.util.Map;
 
 public class GameImpl implements Game {
 
-
-
     public Player playerInTurn = Player.RED;
     public int worldAge = -4000;
     public Map<Position, CityImpl> cityLoc;
@@ -129,7 +127,10 @@ public class GameImpl implements Game {
 
 
   public void changeWorkForceFocusInCityAt( Position p, String balance ) {}
-  public void changeProductionInCityAt( Position p, String unitType ) {}
+  public void changeProductionInCityAt( Position p, String unitType ) {
+        //TODO check inputs for valid city/unit
+        //TODO set city production type
+  }
   public void performUnitActionAt( Position p ) {
 
       if(unitLoc.containsKey(p)){
