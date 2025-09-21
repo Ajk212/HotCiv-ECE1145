@@ -216,12 +216,43 @@ public class TestAlphaCiv {
 
     @Test
     public void canAccessCity(){
+        //TODO Get production type
         Position p1 = new Position(1,1);
         City testCity = game.getCityAt(p1);
+
+        //Check if city exists at given position
         assertThat(testCity, is(notNullValue()));
+        //Check who owns city
         assertThat(testCity.getOwner(), is(Player.RED));
+        //Check size of city
+        assertThat(testCity.getSize(), is(1));
+        //Check treasury value
+        assertThat(testCity.getTreasury(), is(0));
+        //check production type of city
         assertThat(testCity.getProduction(),  is(nullValue()));
 
+    }
+
+    @Test
+    public void testProductionGrowth(){
+        Position p1 = new Position(1,1);
+        Position p2 = new Position(4,1);
+        City testCity1 = game.getCityAt(p1);
+        City testCity2 = game.getCityAt(p2);
+
+        //Check treasury value
+        assertThat(testCity1.getTreasury(), is(0));
+        assertThat(testCity2.getTreasury(), is(0));
+
+        game.endOfTurn();
+
+        assertThat(testCity1.getTreasury(), is(0));
+        assertThat(testCity2.getTreasury(), is(6));
+
+        game.endOfTurn();
+
+        assertThat(testCity1.getTreasury(), is(6));
+        assertThat(testCity2.getTreasury(), is(6));
     }
 
     @Test

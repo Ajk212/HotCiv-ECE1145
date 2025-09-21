@@ -43,6 +43,7 @@ public class GameImpl implements Game {
     public Map<Position, TileImpl> tileLoc;
     //HashMap to store location of units
     public Map<Position, Unit> unitLoc;
+    private final int productionValue = 6;
   
     public GameImpl() {
         cityLoc = new HashMap<>();
@@ -109,6 +110,14 @@ public class GameImpl implements Game {
 
   public void endOfTurn() {
       playerInTurn = (playerInTurn == Player.RED) ? Player.BLUE : Player.RED;
+
+      //add production to city
+      for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
+          CityImpl city = entry.getValue();
+          if(city.getOwner().equals(playerInTurn)){
+              city.treasury += productionValue;
+          }
+      }
 
       if (playerInTurn == Player.RED) {
           endOfRound();
