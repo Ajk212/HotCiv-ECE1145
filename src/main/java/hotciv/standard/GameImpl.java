@@ -114,6 +114,9 @@ public class GameImpl implements Game {
           CityImpl city = entry.getValue();
           if(city.getOwner().equals(playerInTurn)){
               city.treasury += productionValue;
+              if(city.treasury >= city.productionCost){
+                  unitLoc.put(new Position(1,1), new UnitImpl(GameConstants.ARCHER, Player.RED, 1,1));
+              }
           }
       }
 
@@ -158,10 +161,29 @@ public class GameImpl implements Game {
           System.out.println("---- ERROR: Invalid City Location ----");
           return;
       }
+
       CityImpl city = cityLoc.get(p);
       city.productionType = unitType;
 
+      int cost;
+
+      if(unitType.equals("settler")){
+          cost = 30;
+      }
+      else if(unitType.equals("legion")){
+          cost = 15;
+      }
+      else if(unitType.equals("archer")){
+          cost = 10;
+      }
+      else{
+          cost = 0;
+      }
+
+      city.productionCost = cost;
+
   }
+
   public void performUnitActionAt( Position p ) {
 
       if(unitLoc.containsKey(p)){
