@@ -33,6 +33,8 @@ import hotciv.framework.*;
 
 */
 
+// this is a hotfix for release 2.1!
+
 public class GameImpl implements Game {
 
     public Player playerInTurn = Player.RED;
