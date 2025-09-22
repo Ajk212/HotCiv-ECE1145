@@ -78,7 +78,12 @@ public class GameImpl implements Game {
       return playerInTurn;
   }
 
-  public Player getWinner() { return null; }
+  public Player getWinner() {
+      if (getAge() >= -3000) {
+          return Player.RED;
+      }
+      return null;
+  }
 
   public int getAge() {
       return worldAge;
