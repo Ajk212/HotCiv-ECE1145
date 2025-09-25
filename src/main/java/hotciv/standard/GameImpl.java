@@ -78,7 +78,7 @@ public class GameImpl implements Game {
       return playerInTurn;
   }
 
-  public Player getWinner() { return null; }
+  public Player getWinner() { return Player.RED; }
 
   public int getAge() {
       return worldAge;
@@ -110,18 +110,7 @@ public class GameImpl implements Game {
       playerInTurn = (playerInTurn == Player.RED) ? Player.BLUE : Player.RED;
       //TODO double check end of turn logic for active player
 
-      //add production to city
-      for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
-          Position cityPos = entry.getKey();
-          CityImpl city = entry.getValue();
-          if(city.getOwner().equals(playerInTurn)){
-              city.treasury += productionValue;
-              //If treasury is greater than production cost, create unit
-              if(city.treasury >= city.productionCost){
-                  produceUnit(city, cityPos);
-              }
-          }
-      }
+
       if (playerInTurn == Player.RED) {
           endOfRound();
       }
@@ -129,12 +118,35 @@ public class GameImpl implements Game {
 
   public void endOfRound() {
       // TODO restore all units' move counts
-      // TODO produce food and production in all cities
-      // TODO produce units in all cities (if enough production)
-      // TODO increase population size in all cities (if enough food)
+
+
+
+      //Iterate over each active city
+      for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
+          Position cityPos = entry.getKey();
+          CityImpl city = entry.getValue();
+
+          // TODO produce food in all cities
+
+          //  increase production in all cities
+          city.treasury += productionValue;
+
+          //produce units in all cities (if enough production)
+          if(city.treasury >= city.productionCost){
+              produceUnit(city, cityPos);
+          }
+
+          // TODO increase population size in all cities (if enough food)
+
+      }
+
 
       // increment the world age
       worldAge += 100;
+
+      if(worldAge >= 3000){
+          getWinner();
+      }
   }
 
   public void produceUnit(CityImpl city, Position cityPos){

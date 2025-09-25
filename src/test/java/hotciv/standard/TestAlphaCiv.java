@@ -249,14 +249,17 @@ public class TestAlphaCiv {
         assertThat(testCity2.getTreasury(), is(0));
 
         game.endOfTurn();
-
-        assertThat(testCity1.getTreasury(), is(0));
-        assertThat(testCity2.getTreasury(), is(6));
-
         game.endOfTurn();
 
         assertThat(testCity1.getTreasury(), is(6));
         assertThat(testCity2.getTreasury(), is(6));
+
+        game.endOfTurn();
+        game.endOfTurn();
+
+
+        assertThat(testCity1.getTreasury(), is(2));
+        assertThat(testCity2.getTreasury(), is(2));
     }
 
     @Test
