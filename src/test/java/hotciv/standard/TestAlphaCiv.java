@@ -130,6 +130,18 @@ public class TestAlphaCiv {
         assertThat(game.getPlayerInTurn(), is(Player.RED));
     }
 
+    @Test
+    public void shouldHaveRedWinAt3000BC() {
+        assertThat(game, is(notNullValue()));
+
+        // advance game from 4000 BC to 3000 BC
+        for (int i = 0; i < 20; i++) { // 20 turns = 10 rounds = 1000 years
+            game.endOfTurn();
+        }
+
+        assertThat(game.getAge(), is(-3000));
+        assertThat(game.getWinner(), is(Player.RED));
+    }
 
     @Test
     public void canAccessUnitAt(){

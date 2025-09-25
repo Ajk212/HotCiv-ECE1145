@@ -33,6 +33,8 @@ import hotciv.framework.*;
 
 */
 
+// this is a hotfix for release 2.1!
+
 public class GameImpl implements Game {
 
     public Player playerInTurn = Player.RED;
@@ -78,7 +80,12 @@ public class GameImpl implements Game {
       return playerInTurn;
   }
 
-  public Player getWinner() { return Player.RED; }
+  public Player getWinner() {
+      if (getAge() >= -3000) {
+          return Player.RED;
+      }
+      return null;
+  }
 
   public int getAge() {
       return worldAge;
