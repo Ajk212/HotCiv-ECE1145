@@ -55,7 +55,7 @@ public class GameImpl implements Game {
       
         //Add red starting archer
         unitLoc.put(new Position(2,0), new UnitImpl(GameConstants.ARCHER, Player.RED, 1,1));
-      
+        //unitLoc.put(new Position(1,1), new UnitImpl(GameConstants.ARCHER, Player.RED, 1,1));
         //Add red starting settler
         unitLoc.put(new Position(4,3), new UnitImpl(GameConstants.SETTLER, Player.RED, 1,1));
 
@@ -108,14 +108,31 @@ public class GameImpl implements Game {
 
   public void endOfTurn() {
       playerInTurn = (playerInTurn == Player.RED) ? Player.BLUE : Player.RED;
-
+      //TODO double check end of turn logic for active player
+      //TODO refactor unit placment code into own funciton
       //add production to city
       for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
+          Position cityPos = entry.getKey();
           CityImpl city = entry.getValue();
           if(city.getOwner().equals(playerInTurn)){
               city.treasury += productionValue;
               if(city.treasury >= city.productionCost){
-                  unitLoc.put(new Position(1,1), new UnitImpl(GameConstants.ARCHER, Player.RED, 1,1));
+                  Unit newUnit = new UnitImpl(city.productionType, city.owner, 1,1);
+                  if(!unitLoc.containsKey(cityPos)){
+                      unitLoc.put(cityPos, newUnit);
+                      System.out.println("----------------- Unit Spawned at: " + cityPos.getRow() + " " + cityPos.getColumn());
+                  }
+                  else{
+                      Position unitPos = findAvailableSpawnLocation(cityPos);
+                      if(unitPos == null){
+                          System.out.println("Invalid Spawn Location");
+                      }
+                      else{
+                          System.out.println("----------------- Unit Spawned at: " + unitPos.getRow() + " " + unitPos.getColumn());
+                          unitLoc.put(unitPos, newUnit);
+                      }
+                  }
+                  city.treasury -= city.productionCost;
               }
           }
       }
@@ -207,5 +224,30 @@ public class GameImpl implements Game {
 
   }
 
+  //Helper function to find free space when producing unit
+  private Position findAvailableSpawnLocation(Position p) {
+      //Directions around a given space
+      int[][] directions = {
+              {0, -1},  // North
+              {1, -1},  // NE
+              {1, 0},   // East
+              {1, 1},   // SE
+              {0, 1},   // South
+              {-1, 1},  // SW
+              {-1, 0},  // West
+              {-1, -1}  // NW
+      };
+
+      //Iterate over directions to find free space
+      for (int[] d : directions) {
+          Position availableSpace = new Position(p.getRow() + d[0], p.getColumn() + d[1]);
+          //If free space found, return position
+          if (!unitLoc.containsKey(availableSpace)) {
+              return availableSpace;
+          }
+      }
+      //return null if no free space found
+      return null;
+  }
 
 }

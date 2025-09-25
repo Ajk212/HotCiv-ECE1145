@@ -281,6 +281,7 @@ public class TestAlphaCiv {
         game.endOfTurn();
         game.endOfTurn();
 
+
         assertThat(game.getUnitAt(p1), is(notNullValue()));
     }
 
