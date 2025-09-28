@@ -10,12 +10,15 @@ public class CityImpl implements City {
     protected int treasury;
     protected String productionType;
     protected String workforceFocus;
+    protected int productionCost;
 
     public CityImpl(Player owner)
     {
         this.owner = owner;
         this.treasury = 0;
         this.workforceFocus = "food";
+        this.productionType = "archer";
+        this.productionCost = 10;
     }
     
     public Player getOwner() {

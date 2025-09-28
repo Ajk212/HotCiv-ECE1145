@@ -13,8 +13,24 @@ public class UnitImpl implements Unit {
     public UnitImpl(String unitType, Player owner, int attackingStrength, int defensiveStrength) {
         this.unitType = unitType;
         this.owner = owner;
-        this.attackingStrength = attackingStrength;
-        this.defensiveStrength = defensiveStrength;
+
+        if(unitType.equalsIgnoreCase("ARCHER")){
+            this.attackingStrength = 2;
+            this.defensiveStrength = 3;
+        }
+        else if(unitType.equalsIgnoreCase("SETTLER")){
+            this.attackingStrength = 0;
+            this.defensiveStrength = 3;
+        }
+        else if(unitType.equalsIgnoreCase("LEGION")){
+            this.attackingStrength = 4;
+            this.defensiveStrength = 2;
+        }
+        else{
+            this.attackingStrength = 1;
+            this.defensiveStrength = 1;
+        }
+
     }
 
     public String getTypeString() { return unitType;}
