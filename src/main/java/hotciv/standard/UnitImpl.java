@@ -10,7 +10,7 @@ public class UnitImpl implements Unit {
     protected int attackingStrength;
     protected int defensiveStrength;
 
-    UnitImpl(String unitType, Player owner, int attackingStrength, int defensiveStrength) {
+    public UnitImpl(String unitType, Player owner, int attackingStrength, int defensiveStrength) {
         this.unitType = unitType;
         this.owner = owner;
         this.attackingStrength = attackingStrength;

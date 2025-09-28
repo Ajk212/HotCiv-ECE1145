@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import hotciv.framework.*;
+import hotciv.strategy.*;
+import hotciv.strategy.alpha.*;
 
 
 /** Skeleton implementation of HotCiv.
@@ -39,30 +41,29 @@ public class GameImpl implements Game {
 
     public Player playerInTurn = Player.RED;
     public int worldAge = -4000;
+    public final int productionValue = 6;
+
     public Map<Position, CityImpl> cityLoc;
     public Map<Position, TileImpl> tileLoc;
-    //HashMap to store location of units
     public Map<Position, Unit> unitLoc;
-    public final int productionValue = 6;
-  
-    public GameImpl() {
+
+    private AgingStrategy agingStrategy;
+    private UnitActionStrategy unitActionStrategy;
+    private WinnerStrategy winnerStrategy;
+    private WorldLayoutStrategy worldLayoutStrategy;
+
+    public GameImpl(AgingStrategy as, UnitActionStrategy uas, WinnerStrategy ws, WorldLayoutStrategy wls) {
+        this.agingStrategy = as;
+        this.winnerStrategy = ws;
+        this.unitActionStrategy = uas;
+        this.worldLayoutStrategy = wls;
+
         cityLoc = new HashMap<>();
         tileLoc = new HashMap<>();
         unitLoc = new HashMap<>();
 
-        cityLoc.put(new Position(1,1), new CityImpl(Player.RED));
-        cityLoc.put(new Position(4,1), new CityImpl(Player.BLUE));
-     
-        tileLoc.put(new Position(0,1), new TileImpl(GameConstants.OCEANS));
-      
-        //Add red starting archer
-        unitLoc.put(new Position(2,0), new UnitImpl(GameConstants.ARCHER, Player.RED, 1,1));
-      
-        //Add red starting settler
-        unitLoc.put(new Position(4,3), new UnitImpl(GameConstants.SETTLER, Player.RED, 1,1));
-
-        //Add blue starting legion
-        unitLoc.put(new Position(3,2), new UnitImpl(GameConstants.LEGION, Player.BLUE, 1, 1));
+        // Delegate world initialization
+        worldLayoutStrategy.initializeWorld(this);
     }
 
   public Tile getTileAt( Position p ) { 
@@ -81,10 +82,7 @@ public class GameImpl implements Game {
   }
 
   public Player getWinner() {
-      if (getAge() >= -3000) {
-          return Player.RED;
-      }
-      return null;
+      return winnerStrategy.getWinner(this);
   }
 
   public int getAge() {
@@ -136,7 +134,7 @@ public class GameImpl implements Game {
       // TODO increase population size in all cities (if enough food)
 
       // increment the world age
-      worldAge += 100;
+      worldAge = agingStrategy.calculateNewAge(worldAge);
   }
 
 
@@ -170,26 +168,7 @@ public class GameImpl implements Game {
 
   }
   public void performUnitActionAt( Position p ) {
-
-      if(unitLoc.containsKey(p)){
-          Unit testUnit = getUnitAt(p);
-          if(Objects.equals(testUnit.getTypeString(), "archer")){
-              System.out.println("No associated ability");
-              return;
-          }
-          else if(Objects.equals(testUnit.getTypeString(), "settler")){
-              //System.out.println("Using associated ability: Build City");
-              //Call function to perform action later
-              return;
-          }
-          else if(Objects.equals(testUnit.getTypeString(), "legion")){
-              //System.out.println("Using associated ability: Fortify");
-              //Call function to perform action later//Call function to perform action later
-              return;
-          }
-      }
-      System.out.println("No unit at selected position");
-
+      unitActionStrategy.performUnitActionAt(p, this);
   }
 
 

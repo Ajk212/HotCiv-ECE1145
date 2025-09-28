@@ -11,7 +11,7 @@ public class CityImpl implements City {
     protected String productionType;
     protected String workforceFocus;
 
-    CityImpl(Player owner)
+    public CityImpl(Player owner)
     {
         this.owner = owner;
         this.treasury = 0;

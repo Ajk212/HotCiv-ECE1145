@@ -1,6 +1,7 @@
 package hotciv.standard;
 
 import hotciv.framework.*;
+import hotciv.strategy.alpha.*;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -41,7 +42,12 @@ public class TestAlphaCiv {
     /** Fixture for alphaciv testing. */
     @Before
     public void setUp() {
-        game = new GameImpl();
+        game = new GameImpl(
+            new AlphaAgingStrategy(),
+            new AlphaUnitActionStrategy(),
+            new AlphaWinnerStrategy(),
+            new AlphaWorldLayoutStrategy()
+        );
     }
 
     @Test
