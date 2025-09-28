@@ -244,11 +244,7 @@ public class TestAlphaCiv {
         assertThat(testCity.getTreasury(), is(0));
 
         //check starting production type of city
-        assertThat(testCity.getProduction(),  is(nullValue()));
-
-        //change production type and retest
-        game.changeProductionInCityAt(p1, "archer");
-        assertThat(testCity.getProduction(), is("archer"));
+        assertThat(testCity.getProduction(),  is("archer"));
 
 
     }
@@ -265,14 +261,17 @@ public class TestAlphaCiv {
         assertThat(testCity2.getTreasury(), is(0));
 
         game.endOfTurn();
-
-        assertThat(testCity1.getTreasury(), is(0));
-        assertThat(testCity2.getTreasury(), is(6));
-
         game.endOfTurn();
 
         assertThat(testCity1.getTreasury(), is(6));
         assertThat(testCity2.getTreasury(), is(6));
+
+        game.endOfTurn();
+        game.endOfTurn();
+
+
+        assertThat(testCity1.getTreasury(), is(2));
+        assertThat(testCity2.getTreasury(), is(2));
     }
 
     @Test
@@ -282,11 +281,8 @@ public class TestAlphaCiv {
         City testCity1 = game.getCityAt(p1);
         City testCity2 = game.getCityAt(p2);
 
-        assertThat(testCity1.getProduction(), nullValue());
-        assertThat(testCity2.getProduction(), nullValue());
-
-        game.changeProductionInCityAt(p1, "archer");
         assertThat(testCity1.getProduction(), is("archer"));
+        assertThat(testCity2.getProduction(), is("archer"));
 
         game.changeProductionInCityAt(p2, "settler");
         assertThat(testCity2.getProduction(), is("settler"));
@@ -294,7 +290,14 @@ public class TestAlphaCiv {
 
     @Test
     public void cityCanProduceUnits(){
+        Position p1 = new Position(1,1);
 
+        game.endOfTurn();
+        game.endOfTurn();
+        game.endOfTurn();
+        game.endOfTurn();
+
+        assertThat(game.getUnitAt(p1), is(notNullValue()));
     }
 
     @Test

@@ -56,13 +56,13 @@ public class GameImpl implements Game {
         tileLoc.put(new Position(0,1), new TileImpl(GameConstants.OCEANS));
       
         //Add red starting archer
-        unitLoc.put(new Position(2,0), new UnitImpl(GameConstants.ARCHER, Player.RED, 1,1));
-      
+        unitLoc.put(new Position(2,0), new UnitImpl(GameConstants.ARCHER, Player.RED));
+
         //Add red starting settler
-        unitLoc.put(new Position(4,3), new UnitImpl(GameConstants.SETTLER, Player.RED, 1,1));
+        unitLoc.put(new Position(4,3), new UnitImpl(GameConstants.SETTLER, Player.RED));
 
         //Add blue starting legion
-        unitLoc.put(new Position(3,2), new UnitImpl(GameConstants.LEGION, Player.BLUE, 1, 1));
+        unitLoc.put(new Position(3,2), new UnitImpl(GameConstants.LEGION, Player.BLUE));
     }
 
   public Tile getTileAt( Position p ) { 
@@ -115,14 +115,8 @@ public class GameImpl implements Game {
 
   public void endOfTurn() {
       playerInTurn = (playerInTurn == Player.RED) ? Player.BLUE : Player.RED;
+      //TODO double check end of turn logic for active player
 
-      //add production to city
-      for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
-          CityImpl city = entry.getValue();
-          if(city.getOwner().equals(playerInTurn)){
-              city.treasury += productionValue;
-          }
-      }
 
       if (playerInTurn == Player.RED) {
           endOfRound();
@@ -131,14 +125,81 @@ public class GameImpl implements Game {
 
   public void endOfRound() {
       // TODO restore all units' move counts
-      // TODO produce food and production in all cities
-      // TODO produce units in all cities (if enough production)
-      // TODO increase population size in all cities (if enough food)
+
+
+
+      //Iterate over each active city
+      for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
+          Position cityPos = entry.getKey();
+          CityImpl city = entry.getValue();
+
+          // TODO produce food in all cities
+
+          //  increase production in all cities
+          city.treasury += productionValue;
+
+          //produce units in all cities (if enough production)
+          if(city.treasury >= city.productionCost){
+              produceUnit(city, cityPos);
+          }
+
+          // TODO increase population size in all cities (if enough food)
+
+      }
+
 
       // increment the world age
       worldAge += 100;
+
+      if(worldAge >= 3000){
+          getWinner();
+      }
   }
 
+  public void produceUnit(CityImpl city, Position cityPos){
+      Unit newUnit = new UnitImpl(city.productionType, city.owner);
+      if(!unitLoc.containsKey(cityPos)){
+          unitLoc.put(cityPos, newUnit);
+          System.out.println("Unit Spawned at: " + cityPos.getRow() + " " + cityPos.getColumn());
+      }
+      else{
+          Position unitPos = findAvailableSpawnLocation(cityPos);
+          if(unitPos == null){
+              System.out.println("Invalid Spawn Location");
+          }
+          else{
+              System.out.println("Unit Spawned at: " + unitPos.getRow() + " " + unitPos.getColumn());
+              unitLoc.put(unitPos, newUnit);
+          }
+      }
+      city.treasury -= city.productionCost;
+  }
+
+    //Helper function to find free space when producing unit
+    private Position findAvailableSpawnLocation(Position p) {
+        //Directions around a given space
+        int[][] directions = {
+                {0, -1},  // North
+                {1, -1},  // NE
+                {1, 0},   // East
+                {1, 1},   // SE
+                {0, 1},   // South
+                {-1, 1},  // SW
+                {-1, 0},  // West
+                {-1, -1}  // NW
+        };
+
+        //Iterate over directions to find free space
+        for (int[] d : directions) {
+            Position availableSpace = new Position(p.getRow() + d[1], p.getColumn() + d[0]);
+            //If free space found, return position
+            if (!unitLoc.containsKey(availableSpace)) {
+                return availableSpace;
+            }
+        }
+        //return null if no free space found
+        return null;
+    }
 
   public void changeWorkForceFocusInCityAt( Position p, String balance ) {
 
@@ -165,10 +226,26 @@ public class GameImpl implements Game {
           System.out.println("---- ERROR: Invalid City Location ----");
           return;
       }
+
       CityImpl city = cityLoc.get(p);
       city.productionType = unitType;
 
+      int cost;
+
+      if(unitType.equals("settler")){
+          cost = 30;
+      }
+      else if(unitType.equals("legion")){
+          cost = 15;
+      }
+      else{
+          cost = 10;
+      }
+
+      city.productionCost = cost;
+
   }
+
   public void performUnitActionAt( Position p ) {
 
       if(unitLoc.containsKey(p)){
@@ -191,6 +268,7 @@ public class GameImpl implements Game {
       System.out.println("No unit at selected position");
 
   }
+
 
 
 }
