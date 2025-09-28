@@ -1,5 +1,6 @@
 package hotciv.standard;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -81,10 +82,17 @@ public class GameImpl implements Game {
   }
 
   public Player getWinner() {
-      if (getAge() >= -3000) {
-          return Player.RED;
+      Iterator<CityImpl> iter = cityLoc.values().iterator();
+      Player possibleWinner = iter.next().getOwner();
+      //Iterate over cities to check player owner
+      while(iter.hasNext()){
+          if(iter.next().getOwner() != possibleWinner){
+              //If different city owners exist, return null
+              return null;
+          }
       }
-      return null;
+      //If same player owns all cities, player is winner
+      return possibleWinner;
   }
 
   public int getAge() {
@@ -97,7 +105,7 @@ public class GameImpl implements Game {
       int colDiff = Math.abs(from.getColumn() - to.getColumn());
 
       if (unitLoc.containsKey(from) && (rowDiff + colDiff <= 1)){
-          Unit temp = unitLoc.get(from);
+          Unit movingUnit = unitLoc.get(from);
           unitLoc.remove(from);
 
           if(unitLoc.containsKey(to)){
@@ -105,7 +113,15 @@ public class GameImpl implements Game {
               //System.out.println("Destination Unit Defeated");
           }
 
-          unitLoc.put(to, temp);
+          //Unit capturing city
+          if(cityLoc.containsKey(to)){
+              CityImpl city = cityLoc.get(to);
+              if(city.getOwner() != movingUnit.getOwner()){
+                  city.owner =  movingUnit.getOwner();
+              }
+          }
+
+          unitLoc.put(to, movingUnit);
           return true;
       } else if (rowDiff + colDiff > 1 || rowDiff + colDiff < 0) {
           System.out.println("Invalid Selection, Move Denied");
@@ -149,11 +165,41 @@ public class GameImpl implements Game {
 
 
       // increment the world age
-      worldAge += 100;
+      ageWorld();
 
-      if(worldAge >= 3000){
-          getWinner();
-      }
+      //Check if winner is found
+      getWinner();
+  }
+
+  public void ageWorld(){
+        if(worldAge >= -4000 && worldAge < -100){
+            worldAge += 100;
+        }
+        else if(worldAge == -100){
+            worldAge = -1;
+        }
+        else if(worldAge == -1){
+            worldAge = 1;
+        }
+        else if(worldAge == 1){
+            worldAge = 50;
+        }
+        else if(worldAge >= 50 && worldAge < 1750){
+            worldAge += 50;
+        }
+        else if(worldAge >= 1750 && worldAge < 1900){
+            worldAge += 25;
+        }
+        else if(worldAge >= 1900 && worldAge < 1970){
+            worldAge += 5;
+        }
+        else if(worldAge >= 1970){
+            worldAge += 1;
+        }
+        else{
+            System.out.println("--- ERROR: Reached undefined world age ---");
+        }
+
   }
 
   public void produceUnit(CityImpl city, Position cityPos){
