@@ -1,10 +1,11 @@
 package hotciv.standard;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
 import hotciv.framework.*;
+import hotciv.strategy.*;
+import hotciv.strategy.alpha.*;
 
 
 /** Skeleton implementation of HotCiv.
@@ -40,30 +41,29 @@ public class GameImpl implements Game {
 
     public Player playerInTurn = Player.RED;
     public int worldAge = -4000;
+    public final int productionValue = 6;
+
     public Map<Position, CityImpl> cityLoc;
     public Map<Position, TileImpl> tileLoc;
-    //HashMap to store location of units
     public Map<Position, Unit> unitLoc;
-    public final int productionValue = 6;
-  
-    public GameImpl() {
+
+    private AgingStrategy agingStrategy;
+    private UnitActionStrategy unitActionStrategy;
+    private WinnerStrategy winnerStrategy;
+    private WorldLayoutStrategy worldLayoutStrategy;
+
+    public GameImpl(AgingStrategy as, UnitActionStrategy uas, WinnerStrategy ws, WorldLayoutStrategy wls) {
+        this.agingStrategy = as;
+        this.winnerStrategy = ws;
+        this.unitActionStrategy = uas;
+        this.worldLayoutStrategy = wls;
+
         cityLoc = new HashMap<>();
         tileLoc = new HashMap<>();
         unitLoc = new HashMap<>();
 
-        cityLoc.put(new Position(1,1), new CityImpl(Player.RED));
-        cityLoc.put(new Position(4,1), new CityImpl(Player.BLUE));
-     
-        tileLoc.put(new Position(0,1), new TileImpl(GameConstants.OCEANS));
-      
-        //Add red starting archer
-        unitLoc.put(new Position(2,0), new UnitImpl(GameConstants.ARCHER, Player.RED));
-
-        //Add red starting settler
-        unitLoc.put(new Position(4,3), new UnitImpl(GameConstants.SETTLER, Player.RED));
-
-        //Add blue starting legion
-        unitLoc.put(new Position(3,2), new UnitImpl(GameConstants.LEGION, Player.BLUE));
+        // Delegate world initialization
+        worldLayoutStrategy.initializeWorld(this);
     }
 
   public Tile getTileAt( Position p ) { 
@@ -73,66 +73,70 @@ public class GameImpl implements Game {
       return unitLoc.get(p);
   }
 
+  public void removeUnitAt( Position p) {
+        unitLoc.remove(p);
+  }
+
   public City getCityAt(Position p) {
       return cityLoc.get(p);
   }
 
-  public Player getPlayerInTurn() {
+  public void addCityAt(Position pos, Player owner) {
+        cityLoc.put(pos, new CityImpl(owner));
+  }
+
+    public Player getPlayerInTurn() {
       return playerInTurn;
   }
 
   public Player getWinner() {
-      Iterator<CityImpl> iter = cityLoc.values().iterator();
-      Player possibleWinner = iter.next().getOwner();
-      //Iterate over cities to check player owner
-      while(iter.hasNext()){
-          if(iter.next().getOwner() != possibleWinner){
-              //If different city owners exist, return null
-              return null;
-          }
-      }
-      //If same player owns all cities, player is winner
-      return possibleWinner;
+      return winnerStrategy.getWinner(this);
   }
 
   public int getAge() {
       return worldAge;
   }
 
-  public boolean moveUnit( Position from, Position to ) {
+    public boolean moveUnit( Position from, Position to ) {
 
-      int rowDiff = Math.abs(from.getRow() - to.getRow());
-      int colDiff = Math.abs(from.getColumn() - to.getColumn());
+        int rowDiff = Math.abs(from.getRow() - to.getRow());
+        int colDiff = Math.abs(from.getColumn() - to.getColumn());
 
-      if (unitLoc.containsKey(from) && (rowDiff + colDiff <= 1)){
-          Unit movingUnit = unitLoc.get(from);
-          unitLoc.remove(from);
+        if (unitLoc.containsKey(from) && (rowDiff + colDiff <= 1)){
+            Unit movingUnit = unitLoc.get(from);
+            unitLoc.remove(from);
 
-          if(unitLoc.containsKey(to)){
-              unitLoc.remove(to);
-              //System.out.println("Destination Unit Defeated");
-          }
+            if(unitLoc.containsKey(to)){
+                unitLoc.remove(to);
+                //System.out.println("Destination Unit Defeated");
+            }
 
-          //Unit capturing city
-          if(cityLoc.containsKey(to)){
-              CityImpl city = cityLoc.get(to);
-              if(city.getOwner() != movingUnit.getOwner()){
-                  city.owner =  movingUnit.getOwner();
-              }
-          }
+            //Unit capturing city
+            if(cityLoc.containsKey(to)){
+                CityImpl city = cityLoc.get(to);
+                if(city.getOwner() != movingUnit.getOwner()){
+                    city.owner =  movingUnit.getOwner();
+                }
+            }
 
-          unitLoc.put(to, movingUnit);
-          return true;
-      } else if (rowDiff + colDiff > 1 || rowDiff + colDiff < 0) {
-          System.out.println("Invalid Selection, Move Denied");
-      }
-      return false;
-  }
+            unitLoc.put(to, movingUnit);
+            return true;
+        } else if (rowDiff + colDiff > 1 || rowDiff + colDiff < 0) {
+            System.out.println("Invalid Selection, Move Denied");
+        }
+        return false;
+    }
 
   public void endOfTurn() {
       playerInTurn = (playerInTurn == Player.RED) ? Player.BLUE : Player.RED;
-      //TODO double check end of turn logic for active player
 
+      //add production to city
+      for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
+          CityImpl city = entry.getValue();
+          if(city.getOwner().equals(playerInTurn)){
+              city.treasury += productionValue;
+          }
+      }
 
       if (playerInTurn == Player.RED) {
           endOfRound();
@@ -141,85 +145,44 @@ public class GameImpl implements Game {
 
   public void endOfRound() {
       // TODO restore all units' move counts
-
-
-
+      // TODO produce food and production in all cities
+      // TODO increase population size in all cities (if enough food)
       //Iterate over each active city
       for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
           Position cityPos = entry.getKey();
           CityImpl city = entry.getValue();
 
-          // TODO produce food in all cities
 
           //  increase production in all cities
           city.treasury += productionValue;
 
           //produce units in all cities (if enough production)
-          if(city.treasury >= city.productionCost){
+          if (city.treasury >= city.productionCost) {
               produceUnit(city, cityPos);
           }
-
-          // TODO increase population size in all cities (if enough food)
-
       }
-
-
       // increment the world age
-      ageWorld();
-
-      //Check if winner is found
-      getWinner();
+      worldAge = agingStrategy.calculateNewAge(worldAge);
   }
 
-  public void ageWorld(){
-        if(worldAge >= -4000 && worldAge < -100){
-            worldAge += 100;
-        }
-        else if(worldAge == -100){
-            worldAge = -1;
-        }
-        else if(worldAge == -1){
-            worldAge = 1;
-        }
-        else if(worldAge == 1){
-            worldAge = 50;
-        }
-        else if(worldAge >= 50 && worldAge < 1750){
-            worldAge += 50;
-        }
-        else if(worldAge >= 1750 && worldAge < 1900){
-            worldAge += 25;
-        }
-        else if(worldAge >= 1900 && worldAge < 1970){
-            worldAge += 5;
-        }
-        else if(worldAge >= 1970){
-            worldAge += 1;
+    public void produceUnit(CityImpl city, Position cityPos){
+        Unit newUnit = new UnitImpl(city.productionType, city.owner);
+        if(!unitLoc.containsKey(cityPos)){
+            unitLoc.put(cityPos, newUnit);
+            System.out.println("Unit Spawned at: " + cityPos.getRow() + " " + cityPos.getColumn());
         }
         else{
-            System.out.println("--- ERROR: Reached undefined world age ---");
+            Position unitPos = findAvailableSpawnLocation(cityPos);
+            if(unitPos == null){
+                System.out.println("Invalid Spawn Location");
+            }
+            else{
+                System.out.println("Unit Spawned at: " + unitPos.getRow() + " " + unitPos.getColumn());
+                unitLoc.put(unitPos, newUnit);
+            }
         }
-
-  }
-
-  public void produceUnit(CityImpl city, Position cityPos){
-      Unit newUnit = new UnitImpl(city.productionType, city.owner);
-      if(!unitLoc.containsKey(cityPos)){
-          unitLoc.put(cityPos, newUnit);
-          System.out.println("Unit Spawned at: " + cityPos.getRow() + " " + cityPos.getColumn());
-      }
-      else{
-          Position unitPos = findAvailableSpawnLocation(cityPos);
-          if(unitPos == null){
-              System.out.println("Invalid Spawn Location");
-          }
-          else{
-              System.out.println("Unit Spawned at: " + unitPos.getRow() + " " + unitPos.getColumn());
-              unitLoc.put(unitPos, newUnit);
-          }
-      }
-      city.treasury -= city.productionCost;
-  }
+        city.treasury -= city.productionCost;
+    }
 
     //Helper function to find free space when producing unit
     private Position findAvailableSpawnLocation(Position p) {
@@ -272,49 +235,13 @@ public class GameImpl implements Game {
           System.out.println("---- ERROR: Invalid City Location ----");
           return;
       }
-
       CityImpl city = cityLoc.get(p);
       city.productionType = unitType;
 
-      int cost;
-
-      if(unitType.equals("settler")){
-          cost = 30;
-      }
-      else if(unitType.equals("legion")){
-          cost = 15;
-      }
-      else{
-          cost = 10;
-      }
-
-      city.productionCost = cost;
-
   }
-
   public void performUnitActionAt( Position p ) {
-
-      if(unitLoc.containsKey(p)){
-          Unit testUnit = getUnitAt(p);
-          if(Objects.equals(testUnit.getTypeString(), "archer")){
-              System.out.println("No associated ability");
-              return;
-          }
-          else if(Objects.equals(testUnit.getTypeString(), "settler")){
-              //System.out.println("Using associated ability: Build City");
-              //Call function to perform action later
-              return;
-          }
-          else if(Objects.equals(testUnit.getTypeString(), "legion")){
-              //System.out.println("Using associated ability: Fortify");
-              //Call function to perform action later//Call function to perform action later
-              return;
-          }
-      }
-      System.out.println("No unit at selected position");
-
+      unitActionStrategy.performUnitActionAt(p, this);
   }
-
 
 
 }
