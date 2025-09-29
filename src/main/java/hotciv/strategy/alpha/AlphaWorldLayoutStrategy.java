@@ -16,8 +16,8 @@ public class AlphaWorldLayoutStrategy implements WorldLayoutStrategy {
 
         game.tileLoc.put(new Position(0,1), new TileImpl(GameConstants.OCEANS));
 
-        game.unitLoc.put(new Position(2,0), new UnitImpl(GameConstants.ARCHER, Player.RED, 1,1));
-        game.unitLoc.put(new Position(4,3), new UnitImpl(GameConstants.SETTLER, Player.RED, 1,1));
-        game.unitLoc.put(new Position(3,2), new UnitImpl(GameConstants.LEGION, Player.BLUE, 1, 1));
+        game.unitLoc.put(new Position(2,0), new UnitImpl(GameConstants.ARCHER, Player.RED));
+        game.unitLoc.put(new Position(4,3), new UnitImpl(GameConstants.SETTLER, Player.RED));
+        game.unitLoc.put(new Position(3,2), new UnitImpl(GameConstants.LEGION, Player.BLUE));
     }
 }

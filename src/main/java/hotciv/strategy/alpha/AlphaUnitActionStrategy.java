@@ -5,10 +5,11 @@ import java.util.Objects;
 import hotciv.framework.Game;
 import hotciv.framework.Position;
 import hotciv.framework.Unit;
+import hotciv.standard.GameImpl;
 import hotciv.strategy.UnitActionStrategy;
 
 public class AlphaUnitActionStrategy implements UnitActionStrategy {
-    public void performUnitActionAt(Position p, Game game) {
+    public void performUnitActionAt(Position p, GameImpl game) {
         Unit unit = game.getUnitAt(p);
         if (unit != null) {
             if (Objects.equals(unit.getTypeString(), "archer")) {

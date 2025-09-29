@@ -73,11 +73,19 @@ public class GameImpl implements Game {
       return unitLoc.get(p);
   }
 
+  public void removeUnitAt( Position p) {
+        unitLoc.remove(p);
+  }
+
   public City getCityAt(Position p) {
       return cityLoc.get(p);
   }
 
-  public Player getPlayerInTurn() {
+  public void addCityAt(Position pos, Player owner) {
+        cityLoc.put(pos, new CityImpl(owner));
+  }
+
+    public Player getPlayerInTurn() {
       return playerInTurn;
   }
 
@@ -89,27 +97,35 @@ public class GameImpl implements Game {
       return worldAge;
   }
 
-  public boolean moveUnit( Position from, Position to ) {
+    public boolean moveUnit( Position from, Position to ) {
 
-      int rowDiff = Math.abs(from.getRow() - to.getRow());
-      int colDiff = Math.abs(from.getColumn() - to.getColumn());
+        int rowDiff = Math.abs(from.getRow() - to.getRow());
+        int colDiff = Math.abs(from.getColumn() - to.getColumn());
 
-      if (unitLoc.containsKey(from) && (rowDiff + colDiff <= 1)){
-          Unit temp = unitLoc.get(from);
-          unitLoc.remove(from);
+        if (unitLoc.containsKey(from) && (rowDiff + colDiff <= 1)){
+            Unit movingUnit = unitLoc.get(from);
+            unitLoc.remove(from);
 
-          if(unitLoc.containsKey(to)){
-              unitLoc.remove(to);
-              //System.out.println("Destination Unit Defeated");
-          }
+            if(unitLoc.containsKey(to)){
+                unitLoc.remove(to);
+                //System.out.println("Destination Unit Defeated");
+            }
 
-          unitLoc.put(to, temp);
-          return true;
-      } else if (rowDiff + colDiff > 1 || rowDiff + colDiff < 0) {
-          System.out.println("Invalid Selection, Move Denied");
-      }
-      return false;
-  }
+            //Unit capturing city
+            if(cityLoc.containsKey(to)){
+                CityImpl city = cityLoc.get(to);
+                if(city.getOwner() != movingUnit.getOwner()){
+                    city.owner =  movingUnit.getOwner();
+                }
+            }
+
+            unitLoc.put(to, movingUnit);
+            return true;
+        } else if (rowDiff + colDiff > 1 || rowDiff + colDiff < 0) {
+            System.out.println("Invalid Selection, Move Denied");
+        }
+        return false;
+    }
 
   public void endOfTurn() {
       playerInTurn = (playerInTurn == Player.RED) ? Player.BLUE : Player.RED;
@@ -130,13 +146,69 @@ public class GameImpl implements Game {
   public void endOfRound() {
       // TODO restore all units' move counts
       // TODO produce food and production in all cities
-      // TODO produce units in all cities (if enough production)
       // TODO increase population size in all cities (if enough food)
+      //Iterate over each active city
+      for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
+          Position cityPos = entry.getKey();
+          CityImpl city = entry.getValue();
 
+
+          //  increase production in all cities
+          city.treasury += productionValue;
+
+          //produce units in all cities (if enough production)
+          if (city.treasury >= city.productionCost) {
+              produceUnit(city, cityPos);
+          }
+      }
       // increment the world age
       worldAge = agingStrategy.calculateNewAge(worldAge);
   }
 
+    public void produceUnit(CityImpl city, Position cityPos){
+        Unit newUnit = new UnitImpl(city.productionType, city.owner);
+        if(!unitLoc.containsKey(cityPos)){
+            unitLoc.put(cityPos, newUnit);
+            System.out.println("Unit Spawned at: " + cityPos.getRow() + " " + cityPos.getColumn());
+        }
+        else{
+            Position unitPos = findAvailableSpawnLocation(cityPos);
+            if(unitPos == null){
+                System.out.println("Invalid Spawn Location");
+            }
+            else{
+                System.out.println("Unit Spawned at: " + unitPos.getRow() + " " + unitPos.getColumn());
+                unitLoc.put(unitPos, newUnit);
+            }
+        }
+        city.treasury -= city.productionCost;
+    }
+
+    //Helper function to find free space when producing unit
+    private Position findAvailableSpawnLocation(Position p) {
+        //Directions around a given space
+        int[][] directions = {
+                {0, -1},  // North
+                {1, -1},  // NE
+                {1, 0},   // East
+                {1, 1},   // SE
+                {0, 1},   // South
+                {-1, 1},  // SW
+                {-1, 0},  // West
+                {-1, -1}  // NW
+        };
+
+        //Iterate over directions to find free space
+        for (int[] d : directions) {
+            Position availableSpace = new Position(p.getRow() + d[1], p.getColumn() + d[0]);
+            //If free space found, return position
+            if (!unitLoc.containsKey(availableSpace)) {
+                return availableSpace;
+            }
+        }
+        //return null if no free space found
+        return null;
+    }
 
   public void changeWorkForceFocusInCityAt( Position p, String balance ) {
 

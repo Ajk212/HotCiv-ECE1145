@@ -9,22 +9,28 @@ public class UnitImpl implements Unit {
     protected Player owner;
     protected int attackingStrength;
     protected int defensiveStrength;
+    protected boolean fortified;
+    protected int movement;
 
-    public UnitImpl(String unitType, Player owner, int attackingStrength, int defensiveStrength) {
+    public UnitImpl(String unitType, Player owner) {
         this.unitType = unitType;
         this.owner = owner;
 
         if(unitType.equalsIgnoreCase("ARCHER")){
             this.attackingStrength = 2;
             this.defensiveStrength = 3;
+            this.fortified = false;
+            this.movement = 1;
         }
         else if(unitType.equalsIgnoreCase("SETTLER")){
             this.attackingStrength = 0;
             this.defensiveStrength = 3;
+            this.movement = 1;
         }
         else if(unitType.equalsIgnoreCase("LEGION")){
             this.attackingStrength = 4;
             this.defensiveStrength = 2;
+            this.movement = 1;
         }
         else{
             this.attackingStrength = 1;
@@ -35,8 +41,12 @@ public class UnitImpl implements Unit {
 
     public String getTypeString() { return unitType;}
     public Player getOwner() { return owner;}
-    public int getMoveCount(){ return 1;}
-    public int getDefensiveStrength(){ return 1;}
-    public int getAttackingStrength(){ return 1;}
+    public int getMoveCount(){ return movement;}
+    public int getDefensiveStrength(){ return defensiveStrength;}
+    public int getAttackingStrength(){ return attackingStrength;}
+    public void setMoveCount(int movement){ this.movement=movement;}
+    public void setDefensiveStrength(int defensiveStrength){ this.defensiveStrength=defensiveStrength; }
+    public void setFortified(boolean fortified){ this.fortified=fortified;}
+    public boolean getFortified(){ return fortified;}
 }
 
