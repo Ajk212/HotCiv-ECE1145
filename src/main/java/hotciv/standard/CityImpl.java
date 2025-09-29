@@ -12,7 +12,7 @@ public class CityImpl implements City {
     protected String workforceFocus;
     protected int productionCost;
 
-    CityImpl(Player owner)
+    public CityImpl(Player owner)
     {
         this.owner = owner;
         this.treasury = 0;
