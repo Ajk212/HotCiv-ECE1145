@@ -136,18 +136,18 @@ public class TestAlphaCiv {
         assertThat(game.getPlayerInTurn(), is(Player.RED));
     }
 
-    @Test
-    public void shouldHaveRedWinAt3000BC() {
-        assertThat(game, is(notNullValue()));
-
-        // advance game from 4000 BC to 3000 BC
-        for (int i = 0; i < 20; i++) { // 20 turns = 10 rounds = 1000 years
-            game.endOfTurn();
-        }
-
-        assertThat(game.getAge(), is(-3000));
-        assertThat(game.getWinner(), is(Player.RED));
-    }
+//    @Test
+//    public void shouldHaveRedWinAt3000BC() {
+//        assertThat(game, is(notNullValue()));
+//
+//        // advance game from 4000 BC to 3000 BC
+//        for (int i = 0; i < 20; i++) { // 20 turns = 10 rounds = 1000 years
+//            game.endOfTurn();
+//        }
+//
+//        assertThat(game.getAge(), is(-3000));
+//        assertThat(game.getWinner(), is(Player.RED));
+//    }
 
     @Test
     public void canAccessUnitAt(){
@@ -309,5 +309,103 @@ public class TestAlphaCiv {
         game.changeWorkForceFocusInCityAt(p1, "production");
         assertThat(testCity.getWorkforceFocus(), is("production"));
     }
+
+    @Test
+    public void winnerFoundByConquest(){
+        //Red City at 1,1 : Blue City at 4,1 | Red unit at 2,0 : Blue unit at 3,2
+
+        //Check winner is null
+        assertThat(game.getWinner(), is(nullValue()));
+
+        //Moving red unit to 4,1 each turn
+        Position p1 = new Position(2,0);
+        Position p2 = new Position(3,0);
+        assertThat(game.moveUnit(p1, p2), is(true));
+
+        game.endOfTurn();
+        game.endOfTurn();
+
+        p1 = new Position(3,0);
+        p2 = new Position(4,0);
+        assertThat(game.moveUnit(p1, p2), is(true));
+
+        game.endOfTurn();
+        game.endOfTurn();
+
+        //Move red unit onto Blue city to capture
+        p1 = new Position(4,0);
+        p2 = new Position(4,1);
+        assertThat(game.moveUnit(p1, p2), is(true));
+        assertThat(game.getWinner(), is(Player.RED));
+    }
+
+    @Test
+    public void ageAdvanceBetaCiv(){
+        //Starting age test
+        assertThat(game, is(notNullValue()));
+        assertThat(game.getAge(), is(-4000));
+        game.endOfTurn();
+        game.endOfTurn();
+        assertThat(game.getAge(), is(-3900));
+
+        //Testing 3900BC - 100BC
+        for(int i = 0; i < 38; i++){
+            game.endOfTurn();
+            game.endOfTurn();
+        }
+        assertThat(game.getAge(), is(-100));
+
+        //Testing 100BC - 1BC
+        game.endOfTurn();
+        game.endOfTurn();
+
+        assertThat(game.getAge(), is(-1));
+
+        //Testing 1BC - 1AD
+        game.endOfTurn();
+        game.endOfTurn();
+
+        assertThat(game.getAge(), is(1));
+
+        //Testing 1AD - 50AD
+        game.endOfTurn();
+        game.endOfTurn();
+
+        assertThat(game.getAge(), is(50));
+
+        //Testing 50AD - 1750
+        for(int i = 0; i < 34; i++){
+            game.endOfTurn();
+            game.endOfTurn();
+        }
+
+        assertThat(game.getAge(), is(1750));
+
+        //Testing 1750 - 1900
+        for(int i = 0; i < 6; i++){
+            game.endOfTurn();
+            game.endOfTurn();
+        }
+
+        assertThat(game.getAge(), is(1900));
+
+        //Testing 1900 - 1970
+        for(int i = 0; i < 14; i++){
+            game.endOfTurn();
+            game.endOfTurn();
+        }
+
+        assertThat(game.getAge(), is(1970));
+
+        //Testing 1970 - 1971
+        game.endOfTurn();
+        game.endOfTurn();
+
+        assertThat(game.getAge(), is(1971));
+    }
+
+
+
+
 
 }

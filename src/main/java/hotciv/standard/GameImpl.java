@@ -99,32 +99,63 @@ public class GameImpl implements Game {
 
     public boolean moveUnit( Position from, Position to ) {
 
+        Unit movingUnit = unitLoc.get(from);
         int rowDiff = Math.abs(from.getRow() - to.getRow());
         int colDiff = Math.abs(from.getColumn() - to.getColumn());
+        boolean isMovingOneSpace = unitLoc.containsKey(from) && (rowDiff + colDiff <= 1);
 
-        if (unitLoc.containsKey(from) && (rowDiff + colDiff <= 1)){
-            Unit movingUnit = unitLoc.get(from);
+        if (isMovingOneSpace){
+
+            //Check if unit at destination
+            boolean canTakeUnit = attackUnitIfPresent(from, to);
+
+            if(!canTakeUnit){
+                System.out.println("ERROR: Cannot move onto owned unit. Move Denied");
+                return false;
+            }
+
             unitLoc.remove(from);
 
-            if(unitLoc.containsKey(to)){
-                unitLoc.remove(to);
-                //System.out.println("Destination Unit Defeated");
-            }
-
             //Unit capturing city
-            if(cityLoc.containsKey(to)){
-                CityImpl city = cityLoc.get(to);
-                if(city.getOwner() != movingUnit.getOwner()){
-                    city.owner =  movingUnit.getOwner();
-                }
-            }
+            captureCityIfPresent(to, movingUnit);
 
             unitLoc.put(to, movingUnit);
             return true;
-        } else if (rowDiff + colDiff > 1 || rowDiff + colDiff < 0) {
-            System.out.println("Invalid Selection, Move Denied");
+
+        } else {
+            System.out.println("ERROR: Invalid Selection. Move Denied");
+            return false;
         }
-        return false;
+    }
+
+    public boolean attackUnitIfPresent(Position from, Position to){
+        //If unit does not exit at destination, exit
+        if(!unitLoc.containsKey(to)){
+            return true;
+        }
+
+        Unit destUnit = unitLoc.get(to);
+        Unit movingUnit = unitLoc.get(from);
+        boolean isSameOwner = destUnit.getOwner() == movingUnit.getOwner();
+
+        //If units are owned by same player, invalid move
+        if(isSameOwner){
+            return false;
+        }
+
+        unitLoc.remove(to);
+
+        return true;
+    }
+
+    public void captureCityIfPresent(Position to, Unit movingUnit) {
+
+        if(cityLoc.containsKey(to)){
+            CityImpl city = cityLoc.get(to);
+            if(city.getOwner() != movingUnit.getOwner()){
+                city.owner =  movingUnit.getOwner();
+            }
+        }
     }
 
   public void endOfTurn() {
