@@ -52,11 +52,11 @@ public class GameImpl implements Game {
     private WinnerStrategy winnerStrategy;
     private WorldLayoutStrategy worldLayoutStrategy;
 
-    public GameImpl(AgingStrategy as, UnitActionStrategy uas, WinnerStrategy ws, WorldLayoutStrategy wls) {
-        this.agingStrategy = as;
-        this.winnerStrategy = ws;
-        this.unitActionStrategy = uas;
-        this.worldLayoutStrategy = wls;
+    public GameImpl(HotCivFactory factory) {
+        this.agingStrategy = factory.createAgingStrategy();
+        this.winnerStrategy = factory.createWinnerStrategy();
+        this.unitActionStrategy = factory.createUnitActionStrategy();
+        this.worldLayoutStrategy = factory.createWorldLayoutStrategy();
 
         cityLoc = new HashMap<>();
         tileLoc = new HashMap<>();

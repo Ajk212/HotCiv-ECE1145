@@ -1,6 +1,7 @@
 package hotciv.standard;
 
 import hotciv.framework.*;
+import hotciv.strategy.alpha.AlphaCivFactory;
 import hotciv.strategy.beta.BetaAgingStrategy;
 import hotciv.strategy.alpha.AlphaUnitActionStrategy;
 import hotciv.strategy.beta.BetaWinnerStrategy;
@@ -16,12 +17,7 @@ public class TestBetaCiv {
     /** Fixture for alphaciv testing. */
     @Before
     public void setUp() {
-        game = new GameImpl(
-                new BetaAgingStrategy(),
-                new AlphaUnitActionStrategy(),
-                new BetaWinnerStrategy(),
-                new AlphaWorldLayoutStrategy()
-        );
+        game = new GameImpl(new BetaCivFactory());
     }
 
     @Test
