@@ -5,4 +5,6 @@ public interface HotCivFactory {
     UnitActionStrategy createUnitActionStrategy();
     WinnerStrategy createWinnerStrategy();
     WorldLayoutStrategy createWorldLayoutStrategy();
+    BattleStrategy createBattleStrategy();
+    DieRollingStrategy createDieRollingStrategy();
 }

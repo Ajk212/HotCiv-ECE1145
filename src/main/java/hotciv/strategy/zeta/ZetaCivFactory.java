@@ -1,8 +1,12 @@
-package hotciv.strategy.alpha;
+package hotciv.strategy.zeta;
 
 import hotciv.strategy.*;
+import hotciv.strategy.alpha.AlphaAgingStrategy;
+import hotciv.strategy.alpha.AlphaUnitActionStrategy;
+import hotciv.strategy.alpha.AlphaWorldLayoutStrategy;
+import hotciv.strategy.alpha.AttackerAlwaysWinsStrategy;
 
-public class AlphaCivFactory implements HotCivFactory {
+public class ZetaCivFactory implements HotCivFactory {
     @Override
     public AgingStrategy createAgingStrategy() {
         return new AlphaAgingStrategy();
@@ -15,7 +19,7 @@ public class AlphaCivFactory implements HotCivFactory {
 
     @Override
     public WinnerStrategy createWinnerStrategy() {
-        return new AlphaWinnerStrategy();
+        return new ZetaWinnerStrategy();
     }
 
     @Override
@@ -30,8 +34,6 @@ public class AlphaCivFactory implements HotCivFactory {
 
     @Override
     public DieRollingStrategy createDieRollingStrategy() {
-        // Not used in AlphaCiv, but required by interface
         return new FixedDieRollingStrategy(1);
     }
-
 }

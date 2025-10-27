@@ -4,6 +4,7 @@ import hotciv.strategy.*;
 import hotciv.strategy.alpha.AlphaAgingStrategy;
 import hotciv.strategy.alpha.AlphaWinnerStrategy;
 import hotciv.strategy.alpha.AlphaWorldLayoutStrategy;
+import hotciv.strategy.alpha.AttackerAlwaysWinsStrategy;
 
 public class GammaCivFactory implements HotCivFactory {
     @Override
@@ -24,6 +25,17 @@ public class GammaCivFactory implements HotCivFactory {
     @Override
     public WorldLayoutStrategy createWorldLayoutStrategy() {
         return new AlphaWorldLayoutStrategy();
+    }
+
+    @Override
+    public BattleStrategy createBattleStrategy() {
+        return new AttackerAlwaysWinsStrategy();
+    }
+
+    @Override
+    public DieRollingStrategy createDieRollingStrategy() {
+        // Not used in GammaCiv
+        return new FixedDieRollingStrategy(1);
     }
 
 }
