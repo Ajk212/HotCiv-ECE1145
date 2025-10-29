@@ -4,6 +4,7 @@ import hotciv.framework.*;
 import hotciv.strategy.alpha.AlphaAgingStrategy;
 import hotciv.strategy.alpha.AlphaUnitActionStrategy;
 import hotciv.strategy.alpha.AlphaWinnerStrategy;
+import hotciv.strategy.delta.DeltaCivFactory;
 import hotciv.strategy.delta.DeltaWorldLayoutStrategy;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,12 +19,7 @@ public class TestDeltaCiv {
     /** Fixture for DeltaCiv testing. */
     @Before
     public void setUp() {
-        game = new GameImpl(
-            new AlphaAgingStrategy(),
-            new AlphaUnitActionStrategy(),
-            new AlphaWinnerStrategy(),
-            new DeltaWorldLayoutStrategy()
-        );
+        game = new GameImpl(new DeltaCivFactory());
     }
 
     @Test

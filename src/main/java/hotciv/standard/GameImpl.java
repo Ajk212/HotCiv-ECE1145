@@ -41,26 +41,31 @@ public class GameImpl implements Game {
 
     public Player playerInTurn = Player.RED;
     public int worldAge = -4000;
+    public int roundNumber = 0;
     public final int productionValue = 6;
 
     public Map<Position, CityImpl> cityLoc;
     public Map<Position, TileImpl> tileLoc;
     public Map<Position, Unit> unitLoc;
+    public Map<Player, Integer> attacksWon;
 
     private AgingStrategy agingStrategy;
     private UnitActionStrategy unitActionStrategy;
     private WinnerStrategy winnerStrategy;
     private WorldLayoutStrategy worldLayoutStrategy;
+    private BattleStrategy battleStrategy;
 
-    public GameImpl(AgingStrategy as, UnitActionStrategy uas, WinnerStrategy ws, WorldLayoutStrategy wls) {
-        this.agingStrategy = as;
-        this.winnerStrategy = ws;
-        this.unitActionStrategy = uas;
-        this.worldLayoutStrategy = wls;
+    public GameImpl(HotCivFactory factory) {
+        this.agingStrategy = factory.createAgingStrategy();
+        this.winnerStrategy = factory.createWinnerStrategy();
+        this.unitActionStrategy = factory.createUnitActionStrategy();
+        this.worldLayoutStrategy = factory.createWorldLayoutStrategy();
+        this.battleStrategy = factory.createBattleStrategy();
 
         cityLoc = new HashMap<>();
         tileLoc = new HashMap<>();
         unitLoc = new HashMap<>();
+        attacksWon = new HashMap<>();
 
         // Delegate world initialization
         worldLayoutStrategy.initializeWorld(this);
@@ -97,6 +102,19 @@ public class GameImpl implements Game {
       return worldAge;
   }
 
+  public int getRoundNumber() {
+      return roundNumber;
+  }
+
+  public int getAttacksWon(Player player) {
+      return attacksWon.getOrDefault(player, 0);
+  }
+
+  public void incrementAttacksWon(Player player) {
+      int currentWins = getAttacksWon(player);
+      attacksWon.put(player, currentWins + 1);
+  }
+
     public boolean moveUnit( Position from, Position to ) {
 
         Unit movingUnit = unitLoc.get(from);
@@ -129,7 +147,7 @@ public class GameImpl implements Game {
     }
 
     public boolean attackUnitIfPresent(Position from, Position to){
-        //If unit does not exit at destination, exit
+        //If unit does not exist at destination, exit
         if(!unitLoc.containsKey(to)){
             return true;
         }
@@ -143,9 +161,31 @@ public class GameImpl implements Game {
             return false;
         }
 
-        unitLoc.remove(to);
+        // Resolve the battle using the battle strategy
+        boolean attackerWins = battleStrategy.resolveAttack(this, from, to);
 
-        return true;
+        if(attackerWins){
+            // Attacker wins - remove defender
+            unitLoc.remove(to);
+
+            // Increment attack wins counter for variants that use it
+            // Epsilon: always count
+            // Zeta: only count after round 20
+            if (winnerStrategy instanceof hotciv.strategy.epsilon.EpsilonWinnerStrategy) {
+                incrementAttacksWon(movingUnit.getOwner());
+            } else if (winnerStrategy instanceof hotciv.strategy.zeta.ZetaWinnerStrategy) {
+                if (roundNumber >= 21) {
+                    incrementAttacksWon(movingUnit.getOwner());
+                }
+            }
+            // Other variants (Alpha, Beta, Gamma, Delta): don't count attacks
+
+            return true;
+        } else {
+            // Defender wins - remove attacker
+            unitLoc.remove(from);
+            return false;
+        }
     }
 
     public void captureCityIfPresent(Position to, Unit movingUnit) {
@@ -194,6 +234,8 @@ public class GameImpl implements Game {
       }
       // increment the world age
       worldAge = agingStrategy.calculateNewAge(worldAge);
+      // increment the round number
+      roundNumber++;
   }
 
     public void produceUnit(CityImpl city, Position cityPos){

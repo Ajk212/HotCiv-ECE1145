@@ -33,7 +33,7 @@ public class DeltaWorldLayoutStrategy implements WorldLayoutStrategy {
         // set cities
         game.cityLoc.put(new Position(8,12), new CityImpl(Player.RED));
         game.cityLoc.put(new Position(4,5), new CityImpl(Player.BLUE));
-
+        /*
         // set tile terrain types
         for (int r = 0; r < GameConstants.WORLDSIZE; r++) {
             String row = layout[r];
@@ -50,5 +50,7 @@ public class DeltaWorldLayoutStrategy implements WorldLayoutStrategy {
                 game.tileLoc.put(new Position(r, c), new TileImpl(terrain));
             }
         }
+
+         */
     }
 }

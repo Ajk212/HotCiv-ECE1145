@@ -42,12 +42,7 @@ public class TestAlphaCiv {
     /** Fixture for alphaciv testing. */
     @Before
     public void setUp() {
-        game = new GameImpl(
-            new AlphaAgingStrategy(),
-            new AlphaUnitActionStrategy(),
-            new AlphaWinnerStrategy(),
-            new AlphaWorldLayoutStrategy()
-        );
+        game = new GameImpl(new AlphaCivFactory());
     }
 
     @Test
@@ -404,8 +399,86 @@ public class TestAlphaCiv {
         assertThat(game.getAge(), is(1971));
     }
 
+    // ==================== Round Number Tracking Tests ====================
+    @Test
+    public void shouldStartAtRound0() {
+        GameImpl gameImpl = (GameImpl) game;
+        assertThat(gameImpl.getRoundNumber(), is(0));
+    }
 
+    @Test
+    public void shouldIncrementRoundAfterBothPlayersEndTurn() {
+        GameImpl gameImpl = (GameImpl) game;
+        assertThat(gameImpl.getRoundNumber(), is(0));
 
+        game.endOfTurn(); // Red ends
+        game.endOfTurn(); // Blue ends - end of round
 
+        assertThat(gameImpl.getRoundNumber(), is(1));
+    }
+
+    @Test
+    public void shouldNotIncrementRoundUntilBothPlayersEndTurn() {
+        GameImpl gameImpl = (GameImpl) game;
+        assertThat(gameImpl.getRoundNumber(), is(0));
+
+        game.endOfTurn(); // Red ends
+        assertThat(gameImpl.getRoundNumber(), is(0)); // Still round 0
+
+        game.endOfTurn(); // Blue ends
+        assertThat(gameImpl.getRoundNumber(), is(1)); // Now round 1
+    }
+
+    @Test
+    public void shouldIncrementRoundMultipleTimes() {
+        GameImpl gameImpl = (GameImpl) game;
+
+        for (int i = 0; i < 5; i++) {
+            game.endOfTurn();
+            game.endOfTurn();
+        }
+
+        assertThat(gameImpl.getRoundNumber(), is(5));
+    }
+
+    // ==================== Attack Win Tracking Tests ====================
+    @Test
+    public void shouldStartWithZeroAttackWinsForBothPlayers() {
+        GameImpl gameImpl = (GameImpl) game;
+        assertThat(gameImpl.getAttacksWon(Player.RED), is(0));
+        assertThat(gameImpl.getAttacksWon(Player.BLUE), is(0));
+    }
+
+    @Test
+    public void shouldIncrementAttackWinsForPlayer() {
+        GameImpl gameImpl = (GameImpl) game;
+
+        gameImpl.incrementAttacksWon(Player.RED);
+        assertThat(gameImpl.getAttacksWon(Player.RED), is(1));
+        assertThat(gameImpl.getAttacksWon(Player.BLUE), is(0));
+
+        gameImpl.incrementAttacksWon(Player.RED);
+        assertThat(gameImpl.getAttacksWon(Player.RED), is(2));
+
+        gameImpl.incrementAttacksWon(Player.BLUE);
+        assertThat(gameImpl.getAttacksWon(Player.BLUE), is(1));
+        assertThat(gameImpl.getAttacksWon(Player.RED), is(2));
+    }
+
+    @Test
+    public void shouldTrackMultipleAttackWinsIndependently() {
+        GameImpl gameImpl = (GameImpl) game;
+
+        for (int i = 0; i < 3; i++) {
+            gameImpl.incrementAttacksWon(Player.RED);
+        }
+
+        for (int i = 0; i < 5; i++) {
+            gameImpl.incrementAttacksWon(Player.BLUE);
+        }
+
+        assertThat(gameImpl.getAttacksWon(Player.RED), is(3));
+        assertThat(gameImpl.getAttacksWon(Player.BLUE), is(5));
+    }
 
 }
