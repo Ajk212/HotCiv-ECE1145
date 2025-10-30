@@ -7,6 +7,7 @@ import hotciv.standard.CityImpl;
 import hotciv.standard.GameImpl;
 import hotciv.standard.TileImpl;
 import hotciv.standard.UnitImpl;
+import hotciv.strategy.UnitClassStrategy;
 import hotciv.strategy.WorldLayoutStrategy;
 
 public class AlphaWorldLayoutStrategy implements WorldLayoutStrategy {
@@ -16,8 +17,10 @@ public class AlphaWorldLayoutStrategy implements WorldLayoutStrategy {
 
         game.tileLoc.put(new Position(0,1), new TileImpl(GameConstants.OCEANS));
 
-        game.unitLoc.put(new Position(2,0), new UnitImpl(GameConstants.ARCHER, Player.RED));
-        game.unitLoc.put(new Position(4,3), new UnitImpl(GameConstants.SETTLER, Player.RED));
-        game.unitLoc.put(new Position(3,2), new UnitImpl(GameConstants.LEGION, Player.BLUE));
+        UnitClassStrategy unitStrategy = game.getUnitClassStrategy();
+
+        game.unitLoc.put(new Position(2,0), unitStrategy.createUnit(GameConstants.ARCHER, Player.RED));
+        game.unitLoc.put(new Position(4,3), unitStrategy.createUnit(GameConstants.SETTLER, Player.RED));
+        game.unitLoc.put(new Position(3,2), unitStrategy.createUnit(GameConstants.LEGION, Player.BLUE));
     }
 }

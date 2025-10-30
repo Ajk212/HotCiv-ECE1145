@@ -12,30 +12,14 @@ public class UnitImpl implements Unit {
     protected boolean fortified;
     protected int movement;
 
-    public UnitImpl(String unitType, Player owner) {
+    public UnitImpl(String unitType, Player owner, int attackingStrength, int defensiveStrength, int movement) {
         this.unitType = unitType;
         this.owner = owner;
+        this.attackingStrength = attackingStrength;
+        this.defensiveStrength = defensiveStrength;
+        this.fortified = false;
+        this.movement = movement;
 
-        if(unitType.equalsIgnoreCase("ARCHER")){
-            this.attackingStrength = 2;
-            this.defensiveStrength = 3;
-            this.fortified = false;
-            this.movement = 1;
-        }
-        else if(unitType.equalsIgnoreCase("SETTLER")){
-            this.attackingStrength = 0;
-            this.defensiveStrength = 3;
-            this.movement = 1;
-        }
-        else if(unitType.equalsIgnoreCase("LEGION")){
-            this.attackingStrength = 4;
-            this.defensiveStrength = 2;
-            this.movement = 1;
-        }
-        else{
-            this.attackingStrength = 1;
-            this.defensiveStrength = 1;
-        }
 
     }
 

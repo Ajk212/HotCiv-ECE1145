@@ -50,6 +50,7 @@ public class GameImpl implements Game {
     public Map<Player, Integer> attacksWon;
 
     private AgingStrategy agingStrategy;
+    private UnitClassStrategy unitClassStrategy;
     private UnitActionStrategy unitActionStrategy;
     private WinnerStrategy winnerStrategy;
     private WorldLayoutStrategy worldLayoutStrategy;
@@ -58,6 +59,7 @@ public class GameImpl implements Game {
     public GameImpl(HotCivFactory factory) {
         this.agingStrategy = factory.createAgingStrategy();
         this.winnerStrategy = factory.createWinnerStrategy();
+        this.unitClassStrategy = factory.createUnitClassStrategy();
         this.unitActionStrategy = factory.createUnitActionStrategy();
         this.worldLayoutStrategy = factory.createWorldLayoutStrategy();
         this.battleStrategy = factory.createBattleStrategy();
@@ -108,6 +110,10 @@ public class GameImpl implements Game {
 
   public int getAttacksWon(Player player) {
       return attacksWon.getOrDefault(player, 0);
+  }
+
+  public UnitClassStrategy getUnitClassStrategy() {
+        return unitClassStrategy;
   }
 
   public void incrementAttacksWon(Player player) {
@@ -239,7 +245,7 @@ public class GameImpl implements Game {
   }
 
     public void produceUnit(CityImpl city, Position cityPos){
-        Unit newUnit = new UnitImpl(city.productionType, city.owner);
+        Unit newUnit = unitClassStrategy.createUnit(city.productionType, city.owner);
         if(!unitLoc.containsKey(cityPos)){
             unitLoc.put(cityPos, newUnit);
             System.out.println("Unit Spawned at: " + cityPos.getRow() + " " + cityPos.getColumn());
