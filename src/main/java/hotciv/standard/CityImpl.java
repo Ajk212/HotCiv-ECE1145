@@ -11,6 +11,7 @@ public class CityImpl implements City {
     protected String productionType;
     protected String workforceFocus;
     protected int productionCost;
+    protected int size;
 
     public CityImpl(Player owner)
     {
@@ -19,6 +20,7 @@ public class CityImpl implements City {
         this.workforceFocus = "food";
         this.productionType = "archer";
         this.productionCost = 10;
+        this.size = 1;
     }
     
     public Player getOwner() {
@@ -26,7 +28,7 @@ public class CityImpl implements City {
     }
     
     public int getSize() {
-        return 1;
+        return size;
     }
     
     public int getTreasury() {
@@ -39,5 +41,9 @@ public class CityImpl implements City {
     
     public String getWorkforceFocus() {
         return workforceFocus;
+    }
+
+    public void reduceSize(){
+        this.size--;
     }
 }

@@ -10,16 +10,21 @@ public class UnitImpl implements Unit {
     protected int attackingStrength;
     protected int defensiveStrength;
     protected boolean fortified;
+    protected int totalMovement;
     protected int movement;
+    protected int productionCost;
+    protected boolean unrestrictedMovement;
 
-    public UnitImpl(String unitType, Player owner, int attackingStrength, int defensiveStrength, int movement) {
+    public UnitImpl(String unitType, Player owner, int attackingStrength, int defensiveStrength, int movement, int productionCost, boolean unrestrictedMovement) {
         this.unitType = unitType;
         this.owner = owner;
         this.attackingStrength = attackingStrength;
         this.defensiveStrength = defensiveStrength;
         this.fortified = false;
+        this.totalMovement = movement;
         this.movement = movement;
-
+        this.productionCost = productionCost;
+        this.unrestrictedMovement = unrestrictedMovement;
 
     }
 
@@ -32,5 +37,7 @@ public class UnitImpl implements Unit {
     public void setDefensiveStrength(int defensiveStrength){ this.defensiveStrength=defensiveStrength; }
     public void setFortified(boolean fortified){ this.fortified=fortified;}
     public boolean getFortified(){ return fortified;}
+    public int getProductionCost(){return productionCost;}
+    public void resetMoveCount(){ this.movement = totalMovement;}
 }
 

@@ -18,7 +18,7 @@ public class ThetaCivFactory implements HotCivFactory {
 
     @Override
     public UnitActionStrategy createUnitActionStrategy() {
-        return new GammaUnitActionStrategy();
+        return new ThetaUnitActionStrategy();
     }
 
     @Override

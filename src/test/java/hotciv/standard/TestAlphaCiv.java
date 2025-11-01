@@ -76,7 +76,7 @@ public class TestAlphaCiv {
     @Test
     public void shouldHaveOceanTileAtPosition0_1() {
         assertThat(game, is(notNullValue()));
-        Position p = new Position(0,1);
+        Position p = new Position(1,0);
         assertThat(game.getTileAt(p), is(notNullValue()));
 
         Tile tile = game.getTileAt(p);
@@ -195,9 +195,15 @@ public class TestAlphaCiv {
       Position p2 = new Position(3,0);
       assertThat(game.moveUnit(p1, p2), is(true));
 
+      game.endOfTurn();
+      game.endOfTurn();
+
       p1 = new Position(3,0);
       p2 = new Position(3,1);
       assertThat(game.moveUnit(p1, p2), is(true));
+
+      game.endOfTurn();
+      game.endOfTurn();
 
       p1 = new Position(3,1);
       p2 = new Position(3,3);
@@ -210,9 +216,15 @@ public class TestAlphaCiv {
       Position p2 = new Position(3,0);
       assertThat(game.moveUnit(p1, p2), is(true));
 
+      game.endOfTurn();
+      game.endOfTurn();
+
       p1 = new Position(3,0);
       p2 = new Position(3,1);
       assertThat(game.moveUnit(p1, p2), is(true));
+
+      game.endOfTurn();
+      game.endOfTurn();
 
       p1 = new Position(3,1);
       p2 = new Position(3,2);
