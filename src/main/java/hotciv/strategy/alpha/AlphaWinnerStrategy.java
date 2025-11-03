@@ -11,4 +11,8 @@ public class AlphaWinnerStrategy implements WinnerStrategy {
         }
         return null;
     }
+
+    @Override
+    public void onAttackWon(Game game, Player attacker) {
+    }
 }

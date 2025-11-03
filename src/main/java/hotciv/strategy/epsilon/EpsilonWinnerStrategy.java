@@ -22,4 +22,10 @@ public class EpsilonWinnerStrategy implements WinnerStrategy {
 
         return null;
     }
+
+    @Override
+    public void onAttackWon(Game game, Player attacker) {
+        GameImpl gameImpl = (GameImpl) game;
+        gameImpl.incrementAttacksWon(attacker);
+    }
 }
