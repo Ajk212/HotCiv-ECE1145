@@ -57,7 +57,6 @@ public class ThetaUnitActionStrategy implements UnitActionStrategy {
                 }
                 else if(city.getSize() > 1){
                     ((CityImpl) city).reduceSize();
-
                 }
             }
             else if(!isCityAtLocation && isForest){
@@ -70,12 +69,4 @@ public class ThetaUnitActionStrategy implements UnitActionStrategy {
 
 }
 
-
-//TODO: Set production costs of each unit DONE
-//TODO: Set travel distance to 2 and allow second call to moveUnit() DONE
-//TODO: Create flags for allowing movement over oceans and mountains DONE
-//TODO: Allow for altering of landscape via ability DONE
-//TODO: Check if population growth is needed yet?
-//TODO: Create Test cases for Theta
-//TODO: Write PseudoCode for a parametric approach
 
