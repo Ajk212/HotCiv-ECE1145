@@ -9,6 +9,9 @@ public class AlphaCivFactory implements HotCivFactory {
     }
 
     @Override
+    public UnitClassStrategy createUnitClassStrategy() {return new DefaultUnitClassStrategy();}
+
+    @Override
     public UnitActionStrategy createUnitActionStrategy() {
         return new AlphaUnitActionStrategy();
     }

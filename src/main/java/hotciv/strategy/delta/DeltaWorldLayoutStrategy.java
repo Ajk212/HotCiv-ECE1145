@@ -33,24 +33,37 @@ public class DeltaWorldLayoutStrategy implements WorldLayoutStrategy {
         // set cities
         game.cityLoc.put(new Position(8,12), new CityImpl(Player.RED));
         game.cityLoc.put(new Position(4,5), new CityImpl(Player.BLUE));
-        /*
+
         // set tile terrain types
         for (int r = 0; r < GameConstants.WORLDSIZE; r++) {
             String row = layout[r];
             for (int c = 0; c < GameConstants.WORLDSIZE; c++) {
                 char ch = row.charAt(c);
-                String terrain = switch (ch) {
-                    case 'p' -> GameConstants.PLAINS;
-                    case 'o' -> GameConstants.OCEANS;
-                    case 'f' -> GameConstants.FOREST;
-                    case 'm' -> GameConstants.MOUNTAINS;
-                    case 'h' -> GameConstants.HILLS;
-                    default -> GameConstants.PLAINS;
-                };
+                String terrain;
+                switch (ch) {
+                    case 'p':
+                        terrain = GameConstants.PLAINS;
+                        break;
+                    case 'o':
+                        terrain = GameConstants.OCEANS;
+                        break;
+                    case 'f':
+                        terrain = GameConstants.FOREST;
+                        break;
+                    case 'm':
+                        terrain = GameConstants.MOUNTAINS;
+                        break;
+                    case 'h':
+                        terrain = GameConstants.HILLS;
+                        break;
+                    default:
+                        terrain = GameConstants.PLAINS;
+                        break;
+                }
                 game.tileLoc.put(new Position(r, c), new TileImpl(terrain));
             }
         }
 
-         */
+
     }
 }

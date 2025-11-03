@@ -4,6 +4,7 @@ import hotciv.strategy.*;
 import hotciv.strategy.alpha.AlphaUnitActionStrategy;
 import hotciv.strategy.alpha.AlphaWorldLayoutStrategy;
 import hotciv.strategy.alpha.AttackerAlwaysWinsStrategy;
+import hotciv.strategy.alpha.DefaultUnitClassStrategy;
 
 
 public class BetaCivFactory implements HotCivFactory {
@@ -11,6 +12,9 @@ public class BetaCivFactory implements HotCivFactory {
     public AgingStrategy createAgingStrategy() {
         return new BetaAgingStrategy();
     }
+
+    @Override
+    public UnitClassStrategy createUnitClassStrategy() {return new DefaultUnitClassStrategy();}
 
     @Override
     public UnitActionStrategy createUnitActionStrategy() {

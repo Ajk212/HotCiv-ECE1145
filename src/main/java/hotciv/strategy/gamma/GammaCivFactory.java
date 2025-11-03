@@ -1,16 +1,16 @@
 package hotciv.strategy.gamma;
 
 import hotciv.strategy.*;
-import hotciv.strategy.alpha.AlphaAgingStrategy;
-import hotciv.strategy.alpha.AlphaWinnerStrategy;
-import hotciv.strategy.alpha.AlphaWorldLayoutStrategy;
-import hotciv.strategy.alpha.AttackerAlwaysWinsStrategy;
+import hotciv.strategy.alpha.*;
 
 public class GammaCivFactory implements HotCivFactory {
     @Override
     public AgingStrategy createAgingStrategy() {
         return new AlphaAgingStrategy();
     }
+
+    @Override
+    public UnitClassStrategy createUnitClassStrategy() {return new DefaultUnitClassStrategy();}
 
     @Override
     public UnitActionStrategy createUnitActionStrategy() {

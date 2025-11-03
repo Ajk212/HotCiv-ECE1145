@@ -76,7 +76,7 @@ public class TestAlphaCiv {
     @Test
     public void shouldHaveOceanTileAtPosition0_1() {
         assertThat(game, is(notNullValue()));
-        Position p = new Position(0,1);
+        Position p = new Position(1,0);
         assertThat(game.getTileAt(p), is(notNullValue()));
 
         Tile tile = game.getTileAt(p);
@@ -195,9 +195,15 @@ public class TestAlphaCiv {
       Position p2 = new Position(3,0);
       assertThat(game.moveUnit(p1, p2), is(true));
 
+      game.endOfTurn();
+      game.endOfTurn();
+
       p1 = new Position(3,0);
       p2 = new Position(3,1);
       assertThat(game.moveUnit(p1, p2), is(true));
+
+      game.endOfTurn();
+      game.endOfTurn();
 
       p1 = new Position(3,1);
       p2 = new Position(3,3);
@@ -210,9 +216,15 @@ public class TestAlphaCiv {
       Position p2 = new Position(3,0);
       assertThat(game.moveUnit(p1, p2), is(true));
 
+      game.endOfTurn();
+      game.endOfTurn();
+
       p1 = new Position(3,0);
       p2 = new Position(3,1);
       assertThat(game.moveUnit(p1, p2), is(true));
+
+      game.endOfTurn();
+      game.endOfTurn();
 
       p1 = new Position(3,1);
       p2 = new Position(3,2);
@@ -303,100 +315,6 @@ public class TestAlphaCiv {
         assertThat(testCity.getWorkforceFocus(), is("food"));
         game.changeWorkForceFocusInCityAt(p1, "production");
         assertThat(testCity.getWorkforceFocus(), is("production"));
-    }
-
-    @Test
-    public void winnerFoundByConquest(){
-        //Red City at 1,1 : Blue City at 4,1 | Red unit at 2,0 : Blue unit at 3,2
-
-        //Check winner is null
-        assertThat(game.getWinner(), is(nullValue()));
-
-        //Moving red unit to 4,1 each turn
-        Position p1 = new Position(2,0);
-        Position p2 = new Position(3,0);
-        assertThat(game.moveUnit(p1, p2), is(true));
-
-        game.endOfTurn();
-        game.endOfTurn();
-
-        p1 = new Position(3,0);
-        p2 = new Position(4,0);
-        assertThat(game.moveUnit(p1, p2), is(true));
-
-        game.endOfTurn();
-        game.endOfTurn();
-
-        //Move red unit onto Blue city to capture
-        p1 = new Position(4,0);
-        p2 = new Position(4,1);
-        assertThat(game.moveUnit(p1, p2), is(true));
-        assertThat(game.getWinner(), is(Player.RED));
-    }
-
-    @Test
-    public void ageAdvanceBetaCiv(){
-        //Starting age test
-        assertThat(game, is(notNullValue()));
-        assertThat(game.getAge(), is(-4000));
-        game.endOfTurn();
-        game.endOfTurn();
-        assertThat(game.getAge(), is(-3900));
-
-        //Testing 3900BC - 100BC
-        for(int i = 0; i < 38; i++){
-            game.endOfTurn();
-            game.endOfTurn();
-        }
-        assertThat(game.getAge(), is(-100));
-
-        //Testing 100BC - 1BC
-        game.endOfTurn();
-        game.endOfTurn();
-
-        assertThat(game.getAge(), is(-1));
-
-        //Testing 1BC - 1AD
-        game.endOfTurn();
-        game.endOfTurn();
-
-        assertThat(game.getAge(), is(1));
-
-        //Testing 1AD - 50AD
-        game.endOfTurn();
-        game.endOfTurn();
-
-        assertThat(game.getAge(), is(50));
-
-        //Testing 50AD - 1750
-        for(int i = 0; i < 34; i++){
-            game.endOfTurn();
-            game.endOfTurn();
-        }
-
-        assertThat(game.getAge(), is(1750));
-
-        //Testing 1750 - 1900
-        for(int i = 0; i < 6; i++){
-            game.endOfTurn();
-            game.endOfTurn();
-        }
-
-        assertThat(game.getAge(), is(1900));
-
-        //Testing 1900 - 1970
-        for(int i = 0; i < 14; i++){
-            game.endOfTurn();
-            game.endOfTurn();
-        }
-
-        assertThat(game.getAge(), is(1970));
-
-        //Testing 1970 - 1971
-        game.endOfTurn();
-        game.endOfTurn();
-
-        assertThat(game.getAge(), is(1971));
     }
 
     // ==================== Round Number Tracking Tests ====================

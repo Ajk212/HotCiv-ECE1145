@@ -50,6 +50,7 @@ public class GameImpl implements Game {
     public Map<Player, Integer> attacksWon;
 
     private AgingStrategy agingStrategy;
+    private UnitClassStrategy unitClassStrategy;
     private UnitActionStrategy unitActionStrategy;
     private WinnerStrategy winnerStrategy;
     private WorldLayoutStrategy worldLayoutStrategy;
@@ -58,6 +59,7 @@ public class GameImpl implements Game {
     public GameImpl(HotCivFactory factory) {
         this.agingStrategy = factory.createAgingStrategy();
         this.winnerStrategy = factory.createWinnerStrategy();
+        this.unitClassStrategy = factory.createUnitClassStrategy();
         this.unitActionStrategy = factory.createUnitActionStrategy();
         this.worldLayoutStrategy = factory.createWorldLayoutStrategy();
         this.battleStrategy = factory.createBattleStrategy();
@@ -110,6 +112,10 @@ public class GameImpl implements Game {
       return attacksWon.getOrDefault(player, 0);
   }
 
+  public UnitClassStrategy getUnitClassStrategy() {
+        return unitClassStrategy;
+  }
+
   public void incrementAttacksWon(Player player) {
       int currentWins = getAttacksWon(player);
       attacksWon.put(player, currentWins + 1);
@@ -121,11 +127,20 @@ public class GameImpl implements Game {
         int rowDiff = Math.abs(from.getRow() - to.getRow());
         int colDiff = Math.abs(from.getColumn() - to.getColumn());
         boolean isMovingOneSpace = unitLoc.containsKey(from) && (rowDiff + colDiff <= 1);
+        boolean unitHasMovement = (movingUnit.getMoveCount() >= 1);
 
-        if (isMovingOneSpace){
+        Tile destinationTile = tileLoc.get(to);
+        String tileType = destinationTile.getTypeString().toLowerCase();
+        boolean isRestrictedTerrain = tileType.equals("oceans") || tileType.equals("mountains");
+        boolean canIgnoreRestrictions = ((UnitImpl) movingUnit).unrestrictedMovement;
+        boolean cannotEnter = isRestrictedTerrain && !canIgnoreRestrictions;
 
+
+        if (isMovingOneSpace && unitHasMovement && !cannotEnter){
+            ((UnitImpl) movingUnit).setMoveCount(movingUnit.getMoveCount() - 1); //Cast to UnitImpl, may need to fix later
             //Check if unit at destination
             boolean canTakeUnit = attackUnitIfPresent(from, to);
+
 
             if(!canTakeUnit){
                 System.out.println("ERROR: Cannot move onto owned unit. Move Denied");
@@ -138,6 +153,7 @@ public class GameImpl implements Game {
             captureCityIfPresent(to, movingUnit);
 
             unitLoc.put(to, movingUnit);
+
             return true;
 
         } else {
@@ -189,10 +205,10 @@ public class GameImpl implements Game {
     }
 
     public void captureCityIfPresent(Position to, Unit movingUnit) {
-
+        boolean flyingUnit = ((UnitImpl) movingUnit).unrestrictedMovement;
         if(cityLoc.containsKey(to)){
             CityImpl city = cityLoc.get(to);
-            if(city.getOwner() != movingUnit.getOwner()){
+            if(city.getOwner() != movingUnit.getOwner() && !flyingUnit){
                 city.owner =  movingUnit.getOwner();
             }
         }
@@ -215,9 +231,7 @@ public class GameImpl implements Game {
   }
 
   public void endOfRound() {
-      // TODO restore all units' move counts
-      // TODO produce food and production in all cities
-      // TODO increase population size in all cities (if enough food)
+
       //Iterate over each active city
       for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
           Position cityPos = entry.getKey();
@@ -232,6 +246,13 @@ public class GameImpl implements Game {
               produceUnit(city, cityPos);
           }
       }
+
+      //Iterate over each unit and reset move count
+      for(Map.Entry<Position, Unit> entry : unitLoc.entrySet()) {
+          Unit unit = entry.getValue();
+          ((UnitImpl) unit).resetMoveCount();
+      }
+
       // increment the world age
       worldAge = agingStrategy.calculateNewAge(worldAge);
       // increment the round number
@@ -239,7 +260,7 @@ public class GameImpl implements Game {
   }
 
     public void produceUnit(CityImpl city, Position cityPos){
-        Unit newUnit = new UnitImpl(city.productionType, city.owner);
+        Unit newUnit = unitClassStrategy.createUnit(city.productionType, city.owner);
         if(!unitLoc.containsKey(cityPos)){
             unitLoc.put(cityPos, newUnit);
             System.out.println("Unit Spawned at: " + cityPos.getRow() + " " + cityPos.getColumn());
@@ -300,7 +321,9 @@ public class GameImpl implements Game {
 
   }
   public void changeProductionInCityAt( Position p, String unitType ) {
-      if(!(unitType.equals("settler") || unitType.equals("legion") || unitType.equals("archer"))){
+
+        boolean canProduceUnit = unitClassStrategy.canProduceUnit(unitType);
+        if(!canProduceUnit){
           System.out.println("---- ERROR: Invalid Unit Production Type ----");
           return;
       }
@@ -308,8 +331,10 @@ public class GameImpl implements Game {
           System.out.println("---- ERROR: Invalid City Location ----");
           return;
       }
+
       CityImpl city = cityLoc.get(p);
       city.productionType = unitType;
+      city.productionCost = unitClassStrategy.getProductionCost(unitType);
 
   }
   public void performUnitActionAt( Position p ) {

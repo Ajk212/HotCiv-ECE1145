@@ -1,28 +1,29 @@
-package hotciv.strategy.epsilon;
+package hotciv.strategy.theta;
 
 import hotciv.strategy.*;
 import hotciv.strategy.alpha.AlphaAgingStrategy;
-import hotciv.strategy.alpha.AlphaUnitActionStrategy;
+import hotciv.strategy.alpha.AlphaWinnerStrategy;
 import hotciv.strategy.alpha.AlphaWorldLayoutStrategy;
-import hotciv.strategy.alpha.DefaultUnitClassStrategy;
+import hotciv.strategy.alpha.AttackerAlwaysWinsStrategy;
+import hotciv.strategy.gamma.GammaUnitActionStrategy;
 
-public class EpsilonCivFactory implements HotCivFactory {
+public class ThetaCivFactory implements HotCivFactory {
     @Override
     public AgingStrategy createAgingStrategy() {
         return new AlphaAgingStrategy();
     }
 
     @Override
-    public UnitClassStrategy createUnitClassStrategy() {return new DefaultUnitClassStrategy();}
+    public UnitClassStrategy createUnitClassStrategy() {return new ThetaUnitClassStrategy(); }
 
     @Override
     public UnitActionStrategy createUnitActionStrategy() {
-        return new AlphaUnitActionStrategy();
+        return new ThetaUnitActionStrategy();
     }
 
     @Override
     public WinnerStrategy createWinnerStrategy() {
-        return new EpsilonWinnerStrategy();
+        return new AlphaWinnerStrategy();
     }
 
     @Override
@@ -32,11 +33,12 @@ public class EpsilonCivFactory implements HotCivFactory {
 
     @Override
     public BattleStrategy createBattleStrategy() {
-        return new EpsilonBattleStrategy(createDieRollingStrategy());
+        return new AttackerAlwaysWinsStrategy();
     }
 
     @Override
     public DieRollingStrategy createDieRollingStrategy() {
-        return new RandomDieRollingStrategy();
+        // Not used in GammaCiv
+        return new FixedDieRollingStrategy(1);
     }
 }

@@ -1,16 +1,16 @@
 package hotciv.strategy.zeta;
 
 import hotciv.strategy.*;
-import hotciv.strategy.alpha.AlphaAgingStrategy;
-import hotciv.strategy.alpha.AlphaUnitActionStrategy;
-import hotciv.strategy.alpha.AlphaWorldLayoutStrategy;
-import hotciv.strategy.alpha.AttackerAlwaysWinsStrategy;
+import hotciv.strategy.alpha.*;
 
 public class ZetaCivFactory implements HotCivFactory {
     @Override
     public AgingStrategy createAgingStrategy() {
         return new AlphaAgingStrategy();
     }
+
+    @Override
+    public UnitClassStrategy createUnitClassStrategy() {return new DefaultUnitClassStrategy();}
 
     @Override
     public UnitActionStrategy createUnitActionStrategy() {
