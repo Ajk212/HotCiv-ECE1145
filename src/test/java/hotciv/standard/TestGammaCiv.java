@@ -86,9 +86,15 @@ public class TestGammaCiv {
         Position p2 = new Position(3, 0);
         assertThat(game.moveUnit(p1, p2), is(true));
 
+        game.endOfTurn();
+        game.endOfTurn();
+
         p1 = new Position(3, 0);
         p2 = new Position(3, 1);
         assertThat(game.moveUnit(p1, p2), is(true));
+
+        game.endOfTurn();
+        game.endOfTurn();
 
         p1 = new Position(3, 1);
         p2 = new Position(3, 2);
