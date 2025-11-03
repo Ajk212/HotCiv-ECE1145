@@ -5,4 +5,6 @@ import hotciv.framework.Player;
 
 public interface WinnerStrategy {
     Player getWinner(Game game);
+
+    void onAttackWon(Game game, Player attacker);
 }

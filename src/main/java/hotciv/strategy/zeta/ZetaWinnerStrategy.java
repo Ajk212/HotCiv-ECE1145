@@ -29,4 +29,14 @@ public class ZetaWinnerStrategy implements WinnerStrategy {
             return epsilonStrategy.getWinner(game);
         }
     }
+
+    @Override
+    public void onAttackWon(Game game, Player attacker) {
+        GameImpl gameImpl = (GameImpl) game;
+
+        // only track attacks after round 20
+        if (gameImpl.getRoundNumber() >= 21) {
+            gameImpl.incrementAttacksWon(attacker);
+        }
+    }
 }

@@ -26,8 +26,4 @@ public class BetaAgingStrategy implements AgingStrategy {
         System.out.println("--- ERROR: Reached undefined world age ---");
         return 0;
     }
-
-
-
-
 }

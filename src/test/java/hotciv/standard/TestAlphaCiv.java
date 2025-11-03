@@ -317,7 +317,6 @@ public class TestAlphaCiv {
         assertThat(testCity.getWorkforceFocus(), is("production"));
     }
 
-    // ==================== Round Number Tracking Tests ====================
     @Test
     public void shouldStartAtRound0() {
         GameImpl gameImpl = (GameImpl) game;
@@ -359,7 +358,7 @@ public class TestAlphaCiv {
         assertThat(gameImpl.getRoundNumber(), is(5));
     }
 
-    // ==================== Attack Win Tracking Tests ====================
+
     @Test
     public void shouldStartWithZeroAttackWinsForBothPlayers() {
         GameImpl gameImpl = (GameImpl) game;

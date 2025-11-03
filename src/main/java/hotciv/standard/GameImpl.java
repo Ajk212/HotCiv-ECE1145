@@ -184,17 +184,8 @@ public class GameImpl implements Game {
             // Attacker wins - remove defender
             unitLoc.remove(to);
 
-            // Increment attack wins counter for variants that use it
-            // Epsilon: always count
-            // Zeta: only count after round 20
-            if (winnerStrategy instanceof hotciv.strategy.epsilon.EpsilonWinnerStrategy) {
-                incrementAttacksWon(movingUnit.getOwner());
-            } else if (winnerStrategy instanceof hotciv.strategy.zeta.ZetaWinnerStrategy) {
-                if (roundNumber >= 21) {
-                    incrementAttacksWon(movingUnit.getOwner());
-                }
-            }
-            // Other variants (Alpha, Beta, Gamma, Delta): don't count attacks
+            // notify winner strategy of attack victory
+            winnerStrategy.onAttackWon(this, movingUnit.getOwner());
 
             return true;
         } else {

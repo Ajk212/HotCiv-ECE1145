@@ -29,4 +29,8 @@ public class BetaWinnerStrategy implements WinnerStrategy {
         return possibleWinner;
     }
 
+    @Override
+    public void onAttackWon(Game game, Player attacker) {
+    }
+
 }
