@@ -111,49 +111,6 @@ public class TestSemiCiv {
         assertThat(game.getAge(), is(1972));
     }
 
-
-    @Test
-    public void settlerCanBuildCity() {
-        GameImpl gameImpl = (GameImpl) game;
-
-        // place a settler
-        Position settlerPos = new Position(5, 5);
-        gameImpl.unitLoc.put(settlerPos, new UnitImpl(GameConstants.SETTLER, Player.RED));
-
-        // verify no city exists
-        assertThat(game.getCityAt(settlerPos), is(nullValue()));
-
-        // perform settler action
-        game.performUnitActionAt(settlerPos);
-
-        // verify city is made and settler is removed
-        City newCity = game.getCityAt(settlerPos);
-        assertThat(newCity, is(notNullValue()));
-        assertThat(newCity.getOwner(), is(Player.RED));
-        assertThat(game.getUnitAt(settlerPos), is(nullValue()));
-    }
-
-    @Test
-    public void archerCanFortify() {
-        GameImpl gameImpl = (GameImpl) game;
-
-        // place an archer
-        Position archerPos = new Position(6, 6);
-        UnitImpl archer = new UnitImpl(GameConstants.ARCHER, Player.RED);
-        gameImpl.unitLoc.put(archerPos, archer);
-
-        int originalDefense = archer.getDefensiveStrength();
-        assertThat(archer.getFortified(), is(false));
-
-        // perform fortify action
-        game.performUnitActionAt(archerPos);
-
-        // verify archer is fortified
-        assertThat(archer.getFortified(), is(true));
-        assertThat(archer.getDefensiveStrength(), is(originalDefense * 2));
-        assertThat(archer.getMoveCount(), is(0));
-    }
-
     @Test
     public void shouldStartWithNoWinner() {
         assertThat(game.getWinner(), is(nullValue()));

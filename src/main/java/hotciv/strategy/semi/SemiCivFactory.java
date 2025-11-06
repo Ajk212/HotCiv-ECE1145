@@ -1,6 +1,7 @@
 package hotciv.strategy.semi;
 
 import hotciv.strategy.*;
+import hotciv.strategy.alpha.DefaultUnitClassStrategy;
 import hotciv.strategy.beta.BetaAgingStrategy;
 import hotciv.strategy.delta.DeltaWorldLayoutStrategy;
 import hotciv.strategy.epsilon.EpsilonBattleStrategy;
@@ -12,6 +13,9 @@ public class SemiCivFactory implements HotCivFactory {
     public AgingStrategy createAgingStrategy() {
         return new BetaAgingStrategy();
     }
+
+    @Override
+    public UnitClassStrategy createUnitClassStrategy() {return new DefaultUnitClassStrategy();}
 
     @Override
     public UnitActionStrategy createUnitActionStrategy() {
