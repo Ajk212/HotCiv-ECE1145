@@ -398,4 +398,12 @@ public class TestAlphaCiv {
         assertThat(gameImpl.getAttacksWon(Player.BLUE), is(5));
     }
 
+    @Test
+    public void onlyOwnerCanMoveUnit(){
+        //Since starting player is RED, they should be unable to move BLUE units
+        Position p1 = new Position(3,2);
+        Position p2 = new Position(3,3);
+        assertThat(game.moveUnit(p1, p2), is(false));
+    }
+
 }

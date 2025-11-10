@@ -124,6 +124,11 @@ public class GameImpl implements Game {
     public boolean moveUnit( Position from, Position to ) {
 
         Unit movingUnit = unitLoc.get(from);
+
+        if (movingUnit.getOwner() != playerInTurn) {
+            return false;
+        }
+
         int rowDiff = Math.abs(from.getRow() - to.getRow());
         int colDiff = Math.abs(from.getColumn() - to.getColumn());
         boolean isMovingOneSpace = unitLoc.containsKey(from) && (rowDiff + colDiff <= 1);
