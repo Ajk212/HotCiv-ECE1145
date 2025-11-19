@@ -177,6 +177,16 @@ public class TranscribingGame implements Game {
         decoratedGame.performUnitActionAt(p);
     }
 
+    @Override
+    public void addObserver(GameObserver observer) {
+
+    }
+
+    @Override
+    public void setTileFocus(Position position) {
+
+    }
+
     private String formatPosition(Position p) {
         return "(" + p.getRow() + "," + p.getColumn() + ")";
     }
