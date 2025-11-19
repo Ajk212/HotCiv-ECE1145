@@ -30,4 +30,4 @@ Responsibilities:
 
 */
 public enum Player {
-  RED, BLUE, } // YELLOW, GREEN
+  RED, BLUE, YELLOW, GREEN} // YELLOW, GREEN

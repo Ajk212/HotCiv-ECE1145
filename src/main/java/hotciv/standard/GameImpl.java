@@ -337,5 +337,15 @@ public class GameImpl implements Game {
       unitActionStrategy.performUnitActionAt(p, this);
   }
 
+    @Override
+    public void addObserver(GameObserver observer) {
+
+    }
+
+    @Override
+    public void setTileFocus(Position position) {
+
+    }
+
 
 }
