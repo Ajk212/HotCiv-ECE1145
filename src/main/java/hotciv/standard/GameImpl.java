@@ -1,7 +1,5 @@
 package hotciv.standard;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import hotciv.framework.*;
 import hotciv.strategy.*;
@@ -56,6 +54,8 @@ public class GameImpl implements Game {
     private WorldLayoutStrategy worldLayoutStrategy;
     private BattleStrategy battleStrategy;
 
+    private List<GameObserver> observerList = new ArrayList<>();
+
     public GameImpl(HotCivFactory factory) {
         this.agingStrategy = factory.createAgingStrategy();
         this.winnerStrategy = factory.createWinnerStrategy();
@@ -73,53 +73,53 @@ public class GameImpl implements Game {
         worldLayoutStrategy.initializeWorld(this);
     }
 
-  public Tile getTileAt( Position p ) { 
-      return tileLoc.get(p); 
-  }
-  public Unit getUnitAt( Position p ) {
+    public Tile getTileAt( Position p ) {
+      return tileLoc.get(p);
+    }
+    public Unit getUnitAt( Position p ) {
       return unitLoc.get(p);
-  }
+    }
 
-  public void removeUnitAt( Position p) {
+    public void removeUnitAt( Position p) {
         unitLoc.remove(p);
-  }
+    }
 
-  public City getCityAt(Position p) {
+    public City getCityAt(Position p) {
       return cityLoc.get(p);
-  }
+    }
 
-  public void addCityAt(Position pos, Player owner) {
+    public void addCityAt(Position pos, Player owner) {
         cityLoc.put(pos, new CityImpl(owner));
-  }
+    }
 
     public Player getPlayerInTurn() {
       return playerInTurn;
-  }
+    }
 
-  public Player getWinner() {
+    public Player getWinner() {
       return winnerStrategy.getWinner(this);
-  }
+    }
 
-  public int getAge() {
+    public int getAge() {
       return worldAge;
-  }
+    }
 
-  public int getRoundNumber() {
+    public int getRoundNumber() {
       return roundNumber;
-  }
+    }
 
-  public int getAttacksWon(Player player) {
+    public int getAttacksWon(Player player) {
       return attacksWon.getOrDefault(player, 0);
-  }
+    }
 
-  public UnitClassStrategy getUnitClassStrategy() {
+    public UnitClassStrategy getUnitClassStrategy() {
         return unitClassStrategy;
-  }
+    }
 
-  public void incrementAttacksWon(Player player) {
+    public void incrementAttacksWon(Player player) {
       int currentWins = getAttacksWon(player);
       attacksWon.put(player, currentWins + 1);
-  }
+    }
 
     public boolean moveUnit( Position from, Position to ) {
 
@@ -158,7 +158,8 @@ public class GameImpl implements Game {
             captureCityIfPresent(to, movingUnit);
 
             unitLoc.put(to, movingUnit);
-
+            updateWorld(from);
+            updateWorld(to);
             return true;
 
         } else {
@@ -188,7 +189,7 @@ public class GameImpl implements Game {
         if(attackerWins){
             // Attacker wins - remove defender
             unitLoc.remove(to);
-
+            updateWorld(to);
             // notify winner strategy of attack victory
             winnerStrategy.onAttackWon(this, movingUnit.getOwner());
 
@@ -196,6 +197,7 @@ public class GameImpl implements Game {
         } else {
             // Defender wins - remove attacker
             unitLoc.remove(from);
+            updateWorld(from);
             return false;
         }
     }
@@ -206,11 +208,12 @@ public class GameImpl implements Game {
             CityImpl city = cityLoc.get(to);
             if(city.getOwner() != movingUnit.getOwner() && !flyingUnit){
                 city.owner =  movingUnit.getOwner();
+                updateWorld(to);
             }
         }
     }
 
-  public void endOfTurn() {
+    public void endOfTurn() {
       playerInTurn = (playerInTurn == Player.RED) ? Player.BLUE : Player.RED;
 
       //add production to city
@@ -224,9 +227,10 @@ public class GameImpl implements Game {
       if (playerInTurn == Player.RED) {
           endOfRound();
       }
-  }
+      updateTurn();
+    }
 
-  public void endOfRound() {
+    public void endOfRound() {
 
       //Iterate over each active city
       for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
@@ -253,13 +257,14 @@ public class GameImpl implements Game {
       worldAge = agingStrategy.calculateNewAge(worldAge);
       // increment the round number
       roundNumber++;
-  }
+    }
 
     public void produceUnit(CityImpl city, Position cityPos){
         Unit newUnit = unitClassStrategy.createUnit(city.productionType, city.owner);
         if(!unitLoc.containsKey(cityPos)){
             unitLoc.put(cityPos, newUnit);
-            System.out.println("Unit Spawned at: " + cityPos.getRow() + " " + cityPos.getColumn());
+            updateWorld(cityPos);
+            //System.out.println("Unit Spawned at: " + cityPos.getRow() + " " + cityPos.getColumn());
         }
         else{
             Position unitPos = findAvailableSpawnLocation(cityPos);
@@ -267,8 +272,9 @@ public class GameImpl implements Game {
                 System.out.println("Invalid Spawn Location");
             }
             else{
-                System.out.println("Unit Spawned at: " + unitPos.getRow() + " " + unitPos.getColumn());
+                //System.out.println("Unit Spawned at: " + unitPos.getRow() + " " + unitPos.getColumn());
                 unitLoc.put(unitPos, newUnit);
+                updateWorld(unitPos);
             }
         }
         city.treasury -= city.productionCost;
@@ -300,7 +306,7 @@ public class GameImpl implements Game {
         return null;
     }
 
-  public void changeWorkForceFocusInCityAt( Position p, String balance ) {
+    public void changeWorkForceFocusInCityAt( Position p, String balance ) {
 
       //TODO add workforce balance value changes for production and food
       if(!cityLoc.containsKey(p)){
@@ -315,8 +321,8 @@ public class GameImpl implements Game {
       CityImpl city = cityLoc.get(p);
       city.workforceFocus = balance;
 
-  }
-  public void changeProductionInCityAt( Position p, String unitType ) {
+    }
+    public void changeProductionInCityAt( Position p, String unitType ) {
 
         boolean canProduceUnit = unitClassStrategy.canProduceUnit(unitType);
         if(!canProduceUnit){
@@ -332,20 +338,36 @@ public class GameImpl implements Game {
       city.productionType = unitType;
       city.productionCost = unitClassStrategy.getProductionCost(unitType);
 
-  }
-  public void performUnitActionAt( Position p ) {
+    }
+    public void performUnitActionAt( Position p ) {
       unitActionStrategy.performUnitActionAt(p, this);
-  }
+    }
 
     @Override
     public void addObserver(GameObserver observer) {
-
+        observerList.add(observer);
     }
 
     @Override
     public void setTileFocus(Position position) {
-
+        updateTileFocus(position);
+    }
+    public void updateWorld(Position p){
+        for (GameObserver observer : observerList) {
+            observer.worldChangedAt(p);
+        }
     }
 
+    public void updateTurn(){
+        for (GameObserver observer : observerList) {
+            observer.turnEnds(playerInTurn, worldAge);
+        }
+    }
+
+    public void updateTileFocus(Position p){
+        for (GameObserver observer : observerList) {
+            observer.tileFocusChangedAt(p);
+        }
+    }
 
 }

@@ -35,4 +35,15 @@ public class EpsilonTestGameStub implements Game {
     public void changeWorkForceFocusInCityAt(Position p, String balance) {}
     public void changeProductionInCityAt(Position p, String unitType) {}
     public void performUnitActionAt(Position p) {}
+
+    @Override
+    public void addObserver(GameObserver observer) {
+
+    }
+
+    @Override
+    public void setTileFocus(Position position) {
+
+    }
+
 }
