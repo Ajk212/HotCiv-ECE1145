@@ -62,15 +62,50 @@ public class StubGame2 implements Game {
   }
 
   // Stub only allows moving red archer
-  public boolean moveUnit( Position from, Position to ) { 
+  public boolean moveUnit( Position from, Position to ) {
     System.out.println( "-- StubGame2 / moveUnit called: "+from+"->"+to );
+
+    // validate move distance
+    int rowDiff = Math.abs(from.getRow() - to.getRow());
+    int colDiff = Math.abs(from.getColumn() - to.getColumn());
+    boolean isValidDistance = (rowDiff <= 1 && colDiff <= 1) && (rowDiff + colDiff > 0);
+
+    if (!isValidDistance) {
+      System.out.println( "moveUnit failed: too far" );
+      return false;
+    }
+
+    // check if there's a unit at from position
+    Unit unit = getUnitAt(from);
+    if (unit == null) {
+      System.out.println( "moveUnit failed: no unit at from position" );
+      return false;
+    }
+
+    // check if it's the right player's turn
+    if (unit.getOwner() != getPlayerInTurn()) {
+      System.out.println( "moveUnit failed: not your turn" );
+      return false;
+    }
+
+    // move is valid
     if ( from.equals(pos_archer_red) ) {
       pos_archer_red = to;
     }
+    if ( from.equals(pos_settler_red) ) {
+      pos_settler_red = to;
+    }
+    if ( from.equals(pos_legion_blue) ) {
+      pos_legion_blue = to;
+    }
+    if ( from.equals(pos_ufo_red) ) {
+      pos_ufo_red = to;
+    }
+
     // notify our observer(s) about the changes on the tiles
     gameObserver.worldChangedAt(from);
     gameObserver.worldChangedAt(to);
-    return true; 
+    return true;
   }
 
   // === Turn handling ===
