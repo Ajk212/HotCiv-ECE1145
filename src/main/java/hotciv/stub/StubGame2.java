@@ -42,6 +42,8 @@ public class StubGame2 implements Game {
   private Position pos_ufo_red;
 
   private Unit red_archer;
+  private Position pos_city_red;
+  private Position pos_city_blue;
 
   public Unit getUnitAt(Position p) {
     if ( p.equals(pos_archer_red) ) {
@@ -60,28 +62,66 @@ public class StubGame2 implements Game {
   }
 
   // Stub only allows moving red archer
-  public boolean moveUnit( Position from, Position to ) { 
+  public boolean moveUnit( Position from, Position to ) {
     System.out.println( "-- StubGame2 / moveUnit called: "+from+"->"+to );
+
+    // validate move distance
+    int rowDiff = Math.abs(from.getRow() - to.getRow());
+    int colDiff = Math.abs(from.getColumn() - to.getColumn());
+    boolean isValidDistance = (rowDiff <= 1 && colDiff <= 1) && (rowDiff + colDiff > 0);
+
+    if (!isValidDistance) {
+      System.out.println( "moveUnit failed: too far" );
+      return false;
+    }
+
+    // check if there's a unit at from position
+    Unit unit = getUnitAt(from);
+    if (unit == null) {
+      System.out.println( "moveUnit failed: no unit at from position" );
+      return false;
+    }
+
+    // check if it's the right player's turn
+    if (unit.getOwner() != getPlayerInTurn()) {
+      System.out.println( "moveUnit failed: not your turn" );
+      return false;
+    }
+
+    // move is valid
     if ( from.equals(pos_archer_red) ) {
       pos_archer_red = to;
     }
+    if ( from.equals(pos_settler_red) ) {
+      pos_settler_red = to;
+    }
+    if ( from.equals(pos_legion_blue) ) {
+      pos_legion_blue = to;
+    }
+    if ( from.equals(pos_ufo_red) ) {
+      pos_ufo_red = to;
+    }
+
     // notify our observer(s) about the changes on the tiles
     gameObserver.worldChangedAt(from);
     gameObserver.worldChangedAt(to);
-    return true; 
+    return true;
   }
 
   // === Turn handling ===
   private Player inTurn;
+  private int age;
   public void endOfTurn() {
     System.out.println( "-- StubGame2 / endOfTurn called." );
     inTurn = (getPlayerInTurn() == Player.RED ?
-              Player.BLUE : 
+              Player.BLUE :
               Player.RED );
-    // no age increments
-    gameObserver.turnEnds(inTurn, -4000);
+    // increment age each turn for testing
+    age += 100;
+    gameObserver.turnEnds(inTurn, age);
   }
   public Player getPlayerInTurn() { return inTurn; }
+  public int getAge() { return age; }
   
 
   // === Observer handling ===
@@ -91,8 +131,8 @@ public class StubGame2 implements Game {
     gameObserver = observer;
   } 
 
-  public StubGame2() { 
-    defineWorld(1); 
+  public StubGame2() {
+    defineWorld(1);
     // AlphaCiv configuration
     pos_archer_red = new Position( 2, 0);
     pos_legion_blue = new Position( 3, 2);
@@ -100,9 +140,14 @@ public class StubGame2 implements Game {
     pos_ufo_red = new Position( 6, 4);
 
     // the only one I need to store for this stub
-    red_archer = new StubUnit( GameConstants.ARCHER, Player.RED );   
+    red_archer = new StubUnit( GameConstants.ARCHER, Player.RED );
+
+    // cities for testing
+    pos_city_red = new Position(1, 1);
+    pos_city_blue = new Position(2, 3);
 
     inTurn = Player.RED;
+    age = -4000;
   }
 
   // A simple implementation to draw the map of DeltaCiv
@@ -125,17 +170,24 @@ public class StubGame2 implements Game {
   }
 
   // TODO: Add more stub behaviour to test MiniDraw updating
-  public City getCityAt( Position p ) { return null; }
+  public City getCityAt( Position p )
+  {
+    if (p.equals(pos_city_red)) {
+      return new StubCity(Player.RED);
+    }
+    if (p.equals(pos_city_blue)) {
+      return new StubCity(Player.BLUE);
+    }
+    return null;
+  }
   public Player getWinner() { return null; }
-  public int getAge() { return 0; }  
   public void changeWorkForceFocusInCityAt( Position p, String balance ) {}
   public void changeProductionInCityAt( Position p, String unitType ) {}
   public void performUnitActionAt( Position p ) {}  
 
   public void setTileFocus(Position position) {
-    // TODO: setTileFocus implementation pending.
     System.out.println("-- StubGame2 / setTileFocus called.");
-    System.out.println(" *** IMPLEMENTATION PENDING ***");
+    gameObserver.tileFocusChangedAt(position);
   }
 
 }
@@ -152,4 +204,16 @@ class StubUnit implements  Unit {
   public int getMoveCount() { return 1; }
   public int getDefensiveStrength() { return 0; }
   public int getAttackingStrength() { return 0; }
+}
+
+class StubCity implements City {
+  private Player owner;
+  public StubCity(Player owner) {
+    this.owner = owner;
+  }
+  public Player getOwner() { return owner; }
+  public int getSize() { return 1; }
+  public int getTreasury() { return 0; }
+  public String getProduction() { return GameConstants.ARCHER; }
+  public String getWorkforceFocus() { return GameConstants.productionFocus; }
 }
