@@ -38,7 +38,7 @@ public class ShowSetFocus {
     editor.open();
     editor.showStatus("Click a tile to see Game's setFocus method being called.");
 
-    //Sets the SetFocus tool to created version
+    //Sets the SetFocus tool to integrated version
     editor.setTool( new SetFocusTool(editor, game) );
   }
 }
