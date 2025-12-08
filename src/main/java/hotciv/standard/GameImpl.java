@@ -7,31 +7,31 @@ import hotciv.strategy.alpha.*;
 
 
 /** Skeleton implementation of HotCiv.
- 
-   This source code is from the book 
-     "Flexible, Reliable Software:
-       Using Patterns and Agile Development"
-     published 2010 by CRC Press.
-   Author: 
-     Henrik B Christensen 
-     Department of Computer Science
-     Aarhus University
-   
-   Please visit http://www.baerbak.com/ for further information.
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
- 
-       http://www.apache.org/licenses/LICENSE-2.0
- 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+ This source code is from the book
+ "Flexible, Reliable Software:
+ Using Patterns and Agile Development"
+ published 2010 by CRC Press.
+ Author:
+ Henrik B Christensen
+ Department of Computer Science
+ Aarhus University
 
-*/
+ Please visit http://www.baerbak.com/ for further information.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ */
 
 // this is a hotfix for release 2.1!
 
@@ -74,10 +74,10 @@ public class GameImpl implements Game {
     }
 
     public Tile getTileAt( Position p ) {
-      return tileLoc.get(p);
+        return tileLoc.get(p);
     }
     public Unit getUnitAt( Position p ) {
-      return unitLoc.get(p);
+        return unitLoc.get(p);
     }
 
     public void removeUnitAt( Position p) {
@@ -85,7 +85,7 @@ public class GameImpl implements Game {
     }
 
     public City getCityAt(Position p) {
-      return cityLoc.get(p);
+        return cityLoc.get(p);
     }
 
     public void addCityAt(Position pos, Player owner) {
@@ -93,23 +93,23 @@ public class GameImpl implements Game {
     }
 
     public Player getPlayerInTurn() {
-      return playerInTurn;
+        return playerInTurn;
     }
 
     public Player getWinner() {
-      return winnerStrategy.getWinner(this);
+        return winnerStrategy.getWinner(this);
     }
 
     public int getAge() {
-      return worldAge;
+        return worldAge;
     }
 
     public int getRoundNumber() {
-      return roundNumber;
+        return roundNumber;
     }
 
     public int getAttacksWon(Player player) {
-      return attacksWon.getOrDefault(player, 0);
+        return attacksWon.getOrDefault(player, 0);
     }
 
     public UnitClassStrategy getUnitClassStrategy() {
@@ -117,8 +117,8 @@ public class GameImpl implements Game {
     }
 
     public void incrementAttacksWon(Player player) {
-      int currentWins = getAttacksWon(player);
-      attacksWon.put(player, currentWins + 1);
+        int currentWins = getAttacksWon(player);
+        attacksWon.put(player, currentWins + 1);
     }
 
     public boolean moveUnit( Position from, Position to ) {
@@ -129,6 +129,11 @@ public class GameImpl implements Game {
             return false;
         }
 
+        // reject moves where the unit doesn't actually change position
+        if (from.equals(to)) {
+            return false;
+        }
+
         int rowDiff = Math.abs(from.getRow() - to.getRow());
         int colDiff = Math.abs(from.getColumn() - to.getColumn());
         boolean isMovingOneSpace = unitLoc.containsKey(from) && (rowDiff + colDiff <= 1);
@@ -136,7 +141,7 @@ public class GameImpl implements Game {
 
         Tile destinationTile = tileLoc.get(to);
         String tileType = destinationTile.getTypeString().toLowerCase();
-        boolean isRestrictedTerrain = tileType.equals("oceans") || tileType.equals("mountains");
+        boolean isRestrictedTerrain = tileType.equals("ocean") || tileType.equals("mountain");
         boolean canIgnoreRestrictions = ((UnitImpl) movingUnit).unrestrictedMovement;
         boolean cannotEnter = isRestrictedTerrain && !canIgnoreRestrictions;
 
@@ -214,49 +219,49 @@ public class GameImpl implements Game {
     }
 
     public void endOfTurn() {
-      playerInTurn = (playerInTurn == Player.RED) ? Player.BLUE : Player.RED;
+        playerInTurn = (playerInTurn == Player.RED) ? Player.BLUE : Player.RED;
 
-      //add production to city
-      for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
-          CityImpl city = entry.getValue();
-          if(city.getOwner().equals(playerInTurn)){
-              city.treasury += productionValue;
-          }
-      }
+        //add production to city
+        for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
+            CityImpl city = entry.getValue();
+            if(city.getOwner().equals(playerInTurn)){
+                city.treasury += productionValue;
+            }
+        }
 
-      if (playerInTurn == Player.RED) {
-          endOfRound();
-      }
-      updateTurn();
+        if (playerInTurn == Player.RED) {
+            endOfRound();
+        }
+        updateTurn();
     }
 
     public void endOfRound() {
 
-      //Iterate over each active city
-      for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
-          Position cityPos = entry.getKey();
-          CityImpl city = entry.getValue();
+        //Iterate over each active city
+        for(Map.Entry<Position, CityImpl> entry : cityLoc.entrySet()) {
+            Position cityPos = entry.getKey();
+            CityImpl city = entry.getValue();
 
 
-          //  increase production in all cities
-          city.treasury += productionValue;
+            //  increase production in all cities
+            city.treasury += productionValue;
 
-          //produce units in all cities (if enough production)
-          if (city.treasury >= city.productionCost) {
-              produceUnit(city, cityPos);
-          }
-      }
+            //produce units in all cities (if enough production)
+            if (city.treasury >= city.productionCost) {
+                produceUnit(city, cityPos);
+            }
+        }
 
-      //Iterate over each unit and reset move count
-      for(Map.Entry<Position, Unit> entry : unitLoc.entrySet()) {
-          Unit unit = entry.getValue();
-          ((UnitImpl) unit).resetMoveCount();
-      }
+        //Iterate over each unit and reset move count
+        for(Map.Entry<Position, Unit> entry : unitLoc.entrySet()) {
+            Unit unit = entry.getValue();
+            ((UnitImpl) unit).resetMoveCount();
+        }
 
-      // increment the world age
-      worldAge = agingStrategy.calculateNewAge(worldAge);
-      // increment the round number
-      roundNumber++;
+        // increment the world age
+        worldAge = agingStrategy.calculateNewAge(worldAge);
+        // increment the round number
+        roundNumber++;
     }
 
     public void produceUnit(CityImpl city, Position cityPos){
@@ -297,8 +302,14 @@ public class GameImpl implements Game {
         //Iterate over directions to find free space
         for (int[] d : directions) {
             Position availableSpace = new Position(p.getRow() + d[1], p.getColumn() + d[0]);
+
+            // get if terrain is restricted
+            Tile destinationTile = tileLoc.get(availableSpace);
+            String tileType = destinationTile.getTypeString().toLowerCase();
+            boolean isRestrictedTerrain = tileType.equals("ocean") || tileType.equals("mountain");
+
             //If free space found, return position
-            if (!unitLoc.containsKey(availableSpace)) {
+            if (!unitLoc.containsKey(availableSpace) && !isRestrictedTerrain) {
                 return availableSpace;
             }
         }
@@ -308,39 +319,39 @@ public class GameImpl implements Game {
 
     public void changeWorkForceFocusInCityAt( Position p, String balance ) {
 
-      //TODO add workforce balance value changes for production and food
-      if(!cityLoc.containsKey(p)){
-          System.out.println("---- ERROR: Invalid City Location ----");
-          return;
-      }
-      if(!(balance.equals("food") || balance.equals("production"))){
-          System.out.println("---- ERROR: Invalid City Balance Type ----");
-          return;
-      }
+        //TODO add workforce balance value changes for production and food
+        if(!cityLoc.containsKey(p)){
+            System.out.println("---- ERROR: Invalid City Location ----");
+            return;
+        }
+        if(!(balance.equals("food") || balance.equals("production"))){
+            System.out.println("---- ERROR: Invalid City Balance Type ----");
+            return;
+        }
 
-      CityImpl city = cityLoc.get(p);
-      city.workforceFocus = balance;
+        CityImpl city = cityLoc.get(p);
+        city.workforceFocus = balance;
 
     }
     public void changeProductionInCityAt( Position p, String unitType ) {
 
         boolean canProduceUnit = unitClassStrategy.canProduceUnit(unitType);
         if(!canProduceUnit){
-          System.out.println("---- ERROR: Invalid Unit Production Type ----");
-          return;
-      }
-      if(!cityLoc.containsKey(p)){
-          System.out.println("---- ERROR: Invalid City Location ----");
-          return;
-      }
+            System.out.println("---- ERROR: Invalid Unit Production Type ----");
+            return;
+        }
+        if(!cityLoc.containsKey(p)){
+            System.out.println("---- ERROR: Invalid City Location ----");
+            return;
+        }
 
-      CityImpl city = cityLoc.get(p);
-      city.productionType = unitType;
-      city.productionCost = unitClassStrategy.getProductionCost(unitType);
+        CityImpl city = cityLoc.get(p);
+        city.productionType = unitType;
+        city.productionCost = unitClassStrategy.getProductionCost(unitType);
 
     }
     public void performUnitActionAt( Position p ) {
-      unitActionStrategy.performUnitActionAt(p, this);
+        unitActionStrategy.performUnitActionAt(p, this);
     }
 
     @Override
@@ -369,5 +380,4 @@ public class GameImpl implements Game {
             observer.tileFocusChangedAt(p);
         }
     }
-
 }
