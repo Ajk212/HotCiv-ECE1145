@@ -66,10 +66,10 @@ public class CivDrawing
     // changes...
     game.addObserver(this);
     // ... and build up the set of figures associated with
-    // units in the game.
-    defineUnitMap();
-    // and cities in the game
+    // cities in the game
     defineCityMap();
+    // units in the game
+    defineUnitMap();
     // and the set of 'icons' in the status panel
     defineIcons();
   }
@@ -238,8 +238,8 @@ public class CivDrawing
     System.out.println( "CivDrawing: world changes at "+pos);
     // this is a really brute-force algorithm: destroy
     // all known units and build up the entire set again
-    defineUnitMap();
     defineCityMap();
+    defineUnitMap();
   }
 
   public void turnEnds(Player nextPlayer, int age) {
@@ -313,8 +313,8 @@ public class CivDrawing
     // A request has been issued to repaint
     // everything. We simply rebuild the
     // entire Drawing.
-    defineUnitMap();
     defineCityMap();
+    defineUnitMap();
     defineIcons();
   }
 
