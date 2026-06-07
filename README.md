@@ -2,66 +2,156 @@
 
 ## Overview
 
-HotCiv is a Java implementation of simplified version of Sid Mier's Civilization strategy games. This game was developed as a part of a software engineering project. The project was built incrementally through a series of development iterations, each introducing new game mechanics and demonstrating software design principles such as abstraction, polymorphism, strategy patterns, and test-driven development. The objective of the project was to create a flexible game engine capable of supporting multiple rule sets without requiring major changes to the core game implementation.
+HotCiv is a Java implementation of a simplified version of the Civilization strategy game series created by Sid Meier. This project was developed as part of a software engineering course and built incrementally through a series of iterations. Each iteration introduced new game mechanics while demonstrating key software design principles such as abstraction, polymorphism, the Strategy pattern, and test-driven development.
+
+The goal of the project was to create a flexible and extensible game engine capable of supporting multiple rule sets without requiring significant changes to the core architecture.
+
+---
 
 ## Key Features
-- Turn based strategy gameplay
-- Unit movement and combat
-- City production and growth
-- Multiple victory conditions
-- Flexible rule configuration
-- Automated test suite
-- Modular and extenable architecture
+
+- Turn-based strategy gameplay  
+- Unit movement and combat  
+- City production and growth  
+- Multiple victory conditions  
+- Flexible rule configuration  
+- Extensive automated test suite (JUnit)  
+- Modular and extensible architecture  
+
+---
+
+## Testing
+
+A major focus of the HotCiv project is its **extensive automated testing suite**, which was developed alongside the implementation using **Test-Driven Development (TDD)** principles.
+
+### Testing Highlights
+
+- Comprehensive JUnit test coverage for all game versions (AlphaCiv through SemiCiv)
+- Unit tests validating:
+  - Unit movement and combat behavior  
+  - City ownership and production rules  
+  - Turn progression and game state transitions  
+  - Victory conditions across different game variants  
+- Regression testing to ensure new features do not break existing functionality  
+- Isolated testing of individual components through well-defined interfaces  
+
+### Design Impact
+
+The testing strategy strongly influenced the architecture of the system:
+
+- Encouraged loose coupling between components  
+- Required clear and stable interfaces between game systems  
+- Enabled safe refactoring across multiple iterations  
+- Supported verification of each incremental game version  
+
+The test suite serves not only as validation, but also as documentation of expected game behavior.
+
+---
 
 ## Project Evolution
 
 ### AlphaCiv
-AlphaCiv is used to establish the baseline of the game and provide a state to build off of
-#### Features
-- Fixed world layout
-- Red and Blue players
-- Fixed city ownership
-- Defined units
-- Simple turn managment
-- Fixed victory condition
-- Winner determined at specified year
+
+AlphaCiv establishes the baseline game mechanics and provides the foundation for all future versions.
+
+**Features:**
+- Fixed world layout  
+- Red and Blue players  
+- Fixed city ownership  
+- Basic unit definitions  
+- Simple turn management  
+- Fixed victory condition  
+- Winner determined at a specified year  
+
+---
 
 ### BetaCiv
-BetaCiv introduces the variation of victory conditions and time managment
-#### Features
-- Winner declared after conquering all other cities
-- Ending turns progress game calander
+
+BetaCiv introduces alternate victory conditions and world aging mechanics.
+
+**Features:**
+- Victory based on conquest of all cities  
+- Turn progression advances the game calendar  
+
+---
 
 ### GammaCiv
-GammaCiv implements alternate unit actions
-#### Features
-- Settler units can construct citites
-- Archers units can fortify therr positions
-  
+
+GammaCiv introduces new unit actions and expanded gameplay mechanics.
+
+**Features:**
+- Settler units can found new cities  
+- Archer units can fortify their positions  
+
+---
 
 ### DeltaCiv
-DeltaCiv changes the default world layout
-#### Features
-- 16x16 world size
-- Provides both players with cities at pre-defined locations
+
+DeltaCiv introduces an alternative world layout.
+
+**Features:**
+- 16x16 world grid  
+- Predefined city placement for both players  
+
+---
 
 ### EpsilonCiv
-EpsilonCiv adds a new win condition along with unit attack capabilities
-#### Features
-- First player to win three attacks is declared victor
-- Units are now capable of attacking other units or cities
+
+EpsilonCiv introduces combat mechanics and a new victory condition.
+
+**Features:**
+- Units can attack other units and cities  
+- First player to win three battles is declared the winner  
+
+---
 
 ### ZetaCiv
-ZetaCiv implements victory condition alterations so that multiple can be used in a single version
-#### Features
-- Starts with initial AlphaCiv win condition
-- If the game lasts more than 20 rounds the win condition is changed to EpsilonCiv's condition
+
+ZetaCiv demonstrates dynamic and interchangeable victory conditions.
+
+**Features:**
+- Starts with AlphaCiv win conditions  
+- After 20 rounds, switches to EpsilonCiv-style victory conditions  
+- Demonstrates flexible rule composition  
+
+---
 
 ### SemiCiv
-SemiCiv combines all advanced requirements of each version into a singular version
-#### Features
-- BetaCiv world aging
-- GammaCiv unit actions
-- DeltaCiv world layout
-- EpsilonCiv Win condition and combat
-  
+
+SemiCiv combines advanced features from multiple versions into a unified implementation.
+
+**Features:**
+- BetaCiv world aging system  
+- GammaCiv unit actions  
+- DeltaCiv world layout  
+- EpsilonCiv combat and victory conditions  
+
+---
+
+## Design Principles
+
+This project demonstrates several core software engineering principles:
+
+- **Strategy Pattern:** Used for interchangeable game rules such as victory conditions and world aging  
+- **Factory Pattern:** Used to create game objects and support multiple game variants  
+- **Polymorphism:** Enables multiple implementations behind shared interfaces  
+- **Test-Driven Development:** Development guided by automated JUnit tests written alongside features  
+
+---
+
+## Technologies Used
+
+- Java  
+- JUnit  
+- Git  
+- Object-Oriented Programming  
+- Design Patterns (Strategy, Factory)  
+- Test-Driven Development  
+
+---
+
+### Requirements
+- Java 17 or later  
+- IntelliJ IDEA (recommended)  
+
+---
