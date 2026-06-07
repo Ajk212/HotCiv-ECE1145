@@ -59,7 +59,7 @@ ZetaCiv implements victory condition alterations so that multiple can be used in
 
 ### SemiCiv
 SemiCiv combines all advanced requirements of each version into a singular version
-### Features
+#### Features
 - BetaCiv world aging
 - GammaCiv unit actions
 - DeltaCiv world layout
